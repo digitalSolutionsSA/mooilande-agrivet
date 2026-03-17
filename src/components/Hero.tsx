@@ -5,7 +5,7 @@ const Hero: React.FC = () => {
   const [loaded, setLoaded] = useState(false);
 
   const LOGO_LIGHT_GREEN = '#8FBF3A';
-  const LOGO_ORANGE = '#D97A1E';
+  //const LOGO_ORANGE = '#D97A1E';
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 100);
