@@ -5,7 +5,6 @@ const Hero: React.FC = () => {
   const [loaded, setLoaded] = useState(false);
 
   const LOGO_LIGHT_GREEN = '#8FBF3A';
-  //const LOGO_ORANGE = '#D97A1E';
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 100);
@@ -16,11 +15,10 @@ const Hero: React.FC = () => {
     {
       headline: 'Where the land\ncomes first.',
       sub: 'Premium agrivet supplies for South African farms — from animal health to precision crop care.',
-      img: 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1400&q=85',
     },
   ];
 
-  const { headline, sub, img } = slides[0];
+  const { headline, sub } = slides[0];
 
   return (
     <section
@@ -33,18 +31,25 @@ const Hero: React.FC = () => {
         alignItems: 'center',
       }}
     >
-      {/* Background image */}
-      <div
+      {/* VIDEO BACKGROUND */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
         style={{
           position: 'absolute',
-          inset: 0,
-          backgroundImage: `url(${img})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center 40%',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
           transform: loaded ? 'scale(1)' : 'scale(1.06)',
           transition: 'transform 1.4s cubic-bezier(0.4,0,0.2,1)',
         }}
-      />
+      >
+        <source src="/hero-video.mp4" type="video/mp4" />
+      </video>
 
       {/* Gradient overlay */}
       <div
@@ -253,7 +258,7 @@ const Hero: React.FC = () => {
         </div>
       </div>
 
-      {/* Trust badges strip */}
+      {/* Trust badges */}
       <div
         style={{
           position: 'absolute',

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, Search, Menu, X, Phone } from 'lucide-react';
+import { Menu, X, Phone } from 'lucide-react';
 import { CartItem } from '../data/products';
 
 interface NavbarProps {
@@ -9,17 +9,9 @@ interface NavbarProps {
   onSearchChange: (q: string) => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({
-  cartItems,
-  onCartOpen,
-  searchQuery,
-  onSearchChange,
-}) => {
+const Navbar: React.FC<NavbarProps> = (_props) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-
-  const totalItems = cartItems.reduce((sum, i) => sum + i.quantity, 0);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 60);
@@ -28,40 +20,37 @@ const Navbar: React.FC<NavbarProps> = ({
   }, []);
 
   const navLinks = [
-    { label: 'Products', href: '#products' },
-    { label: 'Animal Health', href: '#animal-health' },
-    { label: 'Crop & Plant', href: '#crop' },
-    { label: 'About Us', href: '#about' },
+    { label: 'Departments', href: '#departments' },
+    { label: 'Deliveries', href: '#deliveries' },
+    { label: 'About', href: '#about' },
     { label: 'Contact', href: '#contact' },
   ];
 
   return (
     <>
-      {/* Announcement bar */}
       <div
-        style={{
-          background: 'var(--clr-moss)',
-          color: 'var(--clr-cream)',
-          textAlign: 'center',
-          padding: '8px 16px',
-          fontSize: '13px',
-          letterSpacing: '0.05em',
-          fontWeight: 500,
-        }}
-      >
-        🚜 Free delivery on orders over R1,200 — Serving all of South Africa
-        <span style={{ margin: '0 16px', opacity: 0.4 }}>|</span>
-        <span>
-          <Phone size={12} style={{ display: 'inline', marginRight: 4 }} />
-          +27 (0) 12 000 0000
-        </span>
+  style={{
+    background: 'var(--clr-moss)',
+    color: 'var(--clr-cream)',
+    textAlign: 'center',
+    padding: '8px 16px',
+    fontSize: '13px',
+    letterSpacing: '0.05em',
+    fontWeight: 500,
+    position: 'sticky',
+    top: 0,
+    zIndex: 1000,
+  }}
+>
+        We offer Delivery & Courier Services Nationwide. For any inquiries feel
+        free to contact us!
       </div>
 
       <nav
         style={{
           position: 'sticky',
-          top: 0,
-          zIndex: 1000,
+          top: 37,
+          zIndex: 1002,
           background: scrolled ? 'rgba(250,246,237,0.97)' : 'var(--clr-cream)',
           backdropFilter: scrolled ? 'blur(12px)' : 'none',
           borderBottom: `1px solid ${
@@ -69,84 +58,76 @@ const Navbar: React.FC<NavbarProps> = ({
           }`,
           transition: 'all 0.4s ease',
           boxShadow: scrolled ? 'var(--shadow-sm)' : 'none',
+          overflow: 'visible',
         }}
       >
         <div
-          className="container"
+          className="container navbar-inner"
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '14px 32px',
+            padding: '10px 32px',
             gap: 16,
+            position: 'relative',
+            minHeight: 72,
+            overflow: 'visible',
           }}
         >
-          {/* Logo */}
           <a
             href="#hero"
+            className="navbar-logo"
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 10,
-              flexShrink: 0,
               textDecoration: 'none',
+              position: 'relative',
+              flexShrink: 0,
+              minWidth: 380,
+              height: 72,
+              overflow: 'visible',
             }}
           >
-            <div
+            <img
+              src="/animals-logo.png"
+              alt="Mooilande Logo"
+              className="animals-logo"
               style={{
-                width: 44,
-                height: 44,
-                borderRadius: '50%',
-                overflow: 'hidden',
-                border: '2px solid var(--clr-lime)',
-                background: 'var(--clr-white)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                position: 'absolute',
+                left: -370,
+                top: -164,
+                width: 300,
+                height: 500,
+                objectFit: 'contain',
+                display: 'block',
+                zIndex: 2003,
+                pointerEvents: 'none',
               }}
-            >
-              <img
-                src="/logo.jpeg"
-                alt="Mooilande AgriVet"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block',
-                }}
-              />
-            </div>
+            />
 
-            <div>
-              <div
-                style={{
-                  fontFamily: 'var(--ff-display)',
-                  fontWeight: 700,
-                  fontSize: '1.25rem',
-                  color: 'var(--clr-moss)',
-                  lineHeight: 1.1,
-                }}
-              >
-                Mooilande
-              </div>
-              <div
-                style={{
-                  fontSize: '10px',
-                  fontWeight: 500,
-                  letterSpacing: '0.12em',
-                  color: 'var(--clr-text-muted)',
-                  textTransform: 'uppercase',
-                }}
-              >
-                AgriVet
-              </div>
-            </div>
+            <img
+              src="/name-logo.png"
+              alt="Mooilande AgriVet"
+              className="name-logo"
+              style={{
+                height: 128,
+                objectFit: 'contain',
+                display: 'block',
+                marginLeft: -92,
+                marginTop: 4,
+                position: 'relative',
+                zIndex: 3,
+              }}
+            />
           </a>
 
-          {/* Desktop nav links */}
           <div
-            style={{ display: 'flex', gap: 32, alignItems: 'center' }}
+            style={{
+              display: 'flex',
+              gap: 32,
+              alignItems: 'center',
+              marginLeft: 'auto',
+            }}
             className="desktop-nav"
           >
             {navLinks.map(link => (
@@ -173,124 +154,82 @@ const Navbar: React.FC<NavbarProps> = ({
             ))}
           </div>
 
-          {/* Right actions */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            {/* Search */}
-            {searchOpen ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <input
-                  autoFocus
-                  type="text"
-                  placeholder="Search products…"
-                  value={searchQuery}
-                  onChange={e => onSearchChange(e.target.value)}
-                  style={{
-                    border: '1.5px solid var(--clr-lime)',
-                    borderRadius: 'var(--radius-full)',
-                    padding: '6px 14px',
-                    fontSize: '14px',
-                    background: 'var(--clr-white)',
-                    outline: 'none',
-                    width: 200,
-                    fontFamily: 'var(--ff-body)',
-                  }}
-                />
-                <button
-                  onClick={() => {
-                    setSearchOpen(false);
-                    onSearchChange('');
-                  }}
-                  style={{
-                    color: 'var(--clr-text-muted)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    background: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <X size={18} />
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => setSearchOpen(true)}
-                style={{
-                  color: 'var(--clr-text-muted)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  transition: 'color 0.2s',
-                  background: 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
-                }}
-                onMouseEnter={e =>
-                  (e.currentTarget.style.color = 'var(--clr-moss)')
-                }
-                onMouseLeave={e =>
-                  (e.currentTarget.style.color = 'var(--clr-text-muted)')
-                }
-              >
-                <Search size={20} />
-              </button>
-            )}
-
-            {/* Cart */}
-            <button
-              onClick={onCartOpen}
+          <div
+            className="navbar-contact-actions"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              marginLeft: 24,
+              flexShrink: 0,
+            }}
+          >
+            <a
+              href="tel:0161100861"
               style={{
-                position: 'relative',
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                width: 40,
-                height: 40,
-                background: 'var(--clr-moss)',
-                color: 'var(--clr-white)',
-                borderRadius: 'var(--radius-full)',
-                transition: 'background 0.2s, transform 0.15s',
-                border: 'none',
-                cursor: 'pointer',
+                gap: 8,
+                fontSize: '14px',
+                fontWeight: 600,
+                color: 'var(--clr-moss)',
+                textDecoration: 'none',
+                padding: '10px 14px',
+                border: '1.5px solid rgba(46, 90, 23, 0.18)',
+                borderRadius: '999px',
+                background: 'rgba(168, 200, 69, 0.08)',
+                transition: 'all 0.2s ease',
+                whiteSpace: 'nowrap',
               }}
               onMouseEnter={e => {
-                (e.currentTarget as HTMLButtonElement).style.background =
-                  'var(--clr-fern)';
-                (e.currentTarget as HTMLButtonElement).style.transform =
-                  'scale(1.05)';
+                e.currentTarget.style.background = 'rgba(168, 200, 69, 0.16)';
+                e.currentTarget.style.borderColor = 'rgba(46, 90, 23, 0.32)';
+                e.currentTarget.style.transform = 'translateY(-1px)';
               }}
               onMouseLeave={e => {
-                (e.currentTarget as HTMLButtonElement).style.background =
-                  'var(--clr-moss)';
-                (e.currentTarget as HTMLButtonElement).style.transform =
-                  'scale(1)';
+                e.currentTarget.style.background = 'rgba(168, 200, 69, 0.08)';
+                e.currentTarget.style.borderColor = 'rgba(46, 90, 23, 0.18)';
+                e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
-              <ShoppingCart size={18} />
-              {totalItems > 0 && (
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: -4,
-                    right: -4,
-                    background: 'var(--clr-rust)',
-                    color: 'white',
-                    borderRadius: '50%',
-                    width: 18,
-                    height: 18,
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    animation: 'fadeIn 0.3s ease',
-                  }}
-                >
-                  {totalItems}
-                </span>
-              )}
-            </button>
+              <Phone size={15} />
+              <span>016 110 0861</span>
+            </a>
 
-            {/* Mobile menu toggle */}
+            <a
+              href="https://wa.me/27789337152"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                fontSize: '14px',
+                fontWeight: 700,
+                color: 'white',
+                textDecoration: 'none',
+                padding: '10px 16px',
+                borderRadius: '999px',
+                background: 'var(--clr-moss)',
+                border: '1.5px solid var(--clr-moss)',
+                transition: 'all 0.2s ease',
+                whiteSpace: 'nowrap',
+                boxShadow: '0 8px 18px rgba(46, 90, 23, 0.18)',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = 'translateY(-1px) scale(1.02)';
+                e.currentTarget.style.boxShadow =
+                  '0 12px 24px rgba(46, 90, 23, 0.24)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                e.currentTarget.style.boxShadow =
+                  '0 8px 18px rgba(46, 90, 23, 0.18)';
+              }}
+            >
+              <span>WhatsApp Us</span>
+            </a>
+
             <button
               className="mobile-menu-btn"
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -308,7 +247,6 @@ const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Mobile drawer */}
         {mobileOpen && (
           <div
             style={{
@@ -337,16 +275,129 @@ const Navbar: React.FC<NavbarProps> = ({
                 {link.label}
               </a>
             ))}
+
+            <a
+              href="tel:0161100861"
+              style={{
+                fontSize: '16px',
+                fontWeight: 600,
+                color: 'var(--clr-moss)',
+                textDecoration: 'none',
+                padding: '12px 0 4px',
+              }}
+            >
+              Call: 016 110 0861
+            </a>
+
+            <a
+              href="https://wa.me/27789337152"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontSize: '16px',
+                fontWeight: 700,
+                color: 'var(--clr-moss)',
+                textDecoration: 'none',
+                padding: '4px 0 0',
+              }}
+            >
+              WhatsApp: 078 933 7152
+            </a>
           </div>
         )}
       </nav>
 
       <style>{`
-        @media (max-width: 900px) {
-          .desktop-nav { display: none !important; }
+        @media (max-width: 1280px) {
+          .desktop-nav {
+            gap: 22px !important;
+          }
+
+          .navbar-contact-actions a {
+            font-size: 13px !important;
+            padding: 9px 12px !important;
+          }
         }
+
+        @media (max-width: 1100px) {
+          .navbar-logo {
+            min-width: 320px !important;
+          }
+
+          .animals-logo {
+            left: -78px !important;
+            top: -48px !important;
+            width: 108px !important;
+            height: 108px !important;
+          }
+
+          .name-logo {
+            height: 34px !important;
+            margin-left: 18px !important;
+          }
+
+          .desktop-nav {
+            gap: 18px !important;
+          }
+
+          .navbar-contact-actions {
+            gap: 8px !important;
+          }
+
+          .navbar-contact-actions a:first-child {
+            padding: 9px 10px !important;
+          }
+
+          .navbar-contact-actions a:last-of-type {
+            padding: 9px 12px !important;
+          }
+        }
+
+        @media (max-width: 900px) {
+          .desktop-nav {
+            display: none !important;
+          }
+
+          .navbar-contact-actions a {
+            display: none !important;
+          }
+
+          .navbar-inner {
+            min-height: 74px !important;
+            padding: 12px 20px !important;
+          }
+
+          .navbar-logo {
+            min-width: auto !important;
+            height: 64px !important;
+          }
+
+          .animals-logo {
+            position: relative !important;
+            left: auto !important;
+            top: auto !important;
+            width: 72px !important;
+            height: 72px !important;
+            pointer-events: auto !important;
+          }
+
+          .name-logo {
+            height: 26px !important;
+            margin-left: 10px !important;
+            margin-top: 0 !important;
+          }
+        }
+
         @media (min-width: 901px) {
-          .mobile-menu-btn { display: none !important; }
+          .mobile-menu-btn {
+            display: none !important;
+          }
+        }
+
+        @media (max-width: 600px) {
+          .name-logo {
+            height: 24px !important;
+          }
         }
       `}</style>
     </>

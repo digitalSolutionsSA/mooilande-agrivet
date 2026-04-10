@@ -20,7 +20,7 @@ const ContactSection: React.FC = () => {
       {/* Newsletter banner */}
       <section
         style={{
-          background: LOGO_GREEN,
+          background: LOGO_ORANGE,
           padding: '72px 0',
           position: 'relative',
           overflow: 'hidden',
@@ -34,7 +34,7 @@ const ContactSection: React.FC = () => {
             width: 400,
             height: 400,
             borderRadius: '50%',
-            background: 'rgba(255,255,255,0.06)',
+            background: 'rgba(255,255,255,0.08)',
             pointerEvents: 'none',
           }}
         />
@@ -46,7 +46,7 @@ const ContactSection: React.FC = () => {
               fontWeight: 700,
               letterSpacing: '0.15em',
               textTransform: 'uppercase',
-              color: LOGO_ORANGE,
+              color: 'rgba(255,255,255,0.82)',
               display: 'block',
               marginBottom: 12,
             }}
@@ -68,7 +68,7 @@ const ContactSection: React.FC = () => {
 
           <p
             style={{
-              color: 'rgba(255,255,255,0.85)',
+              color: 'rgba(255,255,255,0.9)',
               marginBottom: 32,
               maxWidth: 480,
               margin: '0 auto 32px',
@@ -82,10 +82,10 @@ const ContactSection: React.FC = () => {
             <div
               style={{
                 background: 'rgba(255,255,255,0.15)',
-                border: `1px solid ${LOGO_ORANGE}`,
+                border: '1px solid rgba(255,255,255,0.45)',
                 borderRadius: 'var(--radius-full)',
                 padding: '14px 32px',
-                color: LOGO_ORANGE,
+                color: 'white',
                 fontWeight: 600,
                 display: 'inline-block',
               }}
@@ -125,7 +125,7 @@ const ContactSection: React.FC = () => {
               <button
                 onClick={handleSubscribe}
                 style={{
-                  background: LOGO_ORANGE,
+                  background: '#b96316',
                   color: 'white',
                   border: 'none',
                   padding: '14px 24px',
@@ -188,10 +188,26 @@ const ContactSection: React.FC = () => {
             <div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
                 {[
-                  { icon: <MapPin size={20} />, title: 'Visit Us', text: 'Gauteng, South Africa\n(Exact address on request)' },
-                  { icon: <Phone size={20} />, title: 'Call Us', text: '+27 (0) 12 000 0000\nMon – Fri: 7:30am – 5:00pm' },
-                  { icon: <Mail size={20} />, title: 'Email Us', text: 'info@mooilandeagrivet.co.za' },
-                  { icon: <Clock size={20} />, title: 'Trading Hours', text: 'Mon – Fri: 07:30 – 17:00\nSat: 08:00 – 13:00\nSun: Closed' },
+                  {
+                    icon: <MapPin size={20} />,
+                    title: 'Visit Us',
+                    text: 'Plot 16, River Park AH, Mooilande, Meyerton, 1960',
+                  },
+                  {
+                    icon: <Phone size={20} />,
+                    title: 'Call Us',
+                    text: 'Landline: 016 110 0861\nCell / WhatsApp: 078 933 7152',
+                  },
+                  {
+                    icon: <Mail size={20} />,
+                    title: 'Email Us',
+                    text: 'info@mooilandeagrivet.co.za',
+                  },
+                  {
+                    icon: <Clock size={20} />,
+                    title: 'Business Hours',
+                    text: 'Monday - Friday: 07h30 - 17h00\nSaturdays: 07h30 - 13h00\nPublic holidays: TBA',
+                  },
                 ].map((item) => (
                   <div key={item.title} style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
                     <div
@@ -222,7 +238,7 @@ const ContactSection: React.FC = () => {
                 ))}
               </div>
 
-              <div style={{ marginTop: 32, display: 'flex', gap: 12 }}>
+              <div style={{ marginTop: 32, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                 <a href="https://www.facebook.com/profile.php?id=61565854067847" target="_blank" rel="noreferrer">
                   <button
                     style={{
@@ -232,9 +248,11 @@ const ContactSection: React.FC = () => {
                       background: '#1877f2',
                       color: 'white',
                       padding: '10px 20px',
+                      border: 'none',
                       borderRadius: 'var(--radius-full)',
                       fontWeight: 600,
                       fontSize: '14px',
+                      cursor: 'pointer',
                     }}
                   >
                     <Facebook size={16} /> Facebook
@@ -249,9 +267,11 @@ const ContactSection: React.FC = () => {
                     background: '#e1306c',
                     color: 'white',
                     padding: '10px 20px',
+                    border: 'none',
                     borderRadius: 'var(--radius-full)',
                     fontWeight: 600,
                     fontSize: '14px',
+                    cursor: 'pointer',
                   }}
                 >
                   <Instagram size={16} /> Instagram
@@ -332,7 +352,7 @@ const ContactSection: React.FC = () => {
 
                   <textarea
                     rows={4}
-                    placeholder="Tell us about your farm and how we can help…"
+                    placeholder="Tell us how we can help…"
                     style={{
                       width: '100%',
                       padding: '11px 16px',
@@ -347,14 +367,14 @@ const ContactSection: React.FC = () => {
                     onFocus={(e) => (e.target.style.borderColor = LOGO_ORANGE)}
                     onBlur={(e) => (e.target.style.borderColor = 'var(--clr-grey-light)')}
                   />
-
                 </div>
 
                 <button
                   style={{
-                    background: LOGO_GREEN,
+                    background: LOGO_ORANGE,
                     color: 'white',
                     padding: '13px',
+                    border: 'none',
                     borderRadius: 'var(--radius-full)',
                     fontWeight: 700,
                     fontSize: '15px',
@@ -362,6 +382,7 @@ const ContactSection: React.FC = () => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: 10,
+                    cursor: 'pointer',
                   }}
                 >
                   Send Message <Send size={16} />

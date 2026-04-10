@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import CategoryBanner from './components/CategoryBanner';
-import FeaturesSection from './components/FeaturesSection';
-import ProductsSection from './components/ProductsSection';
+import { FeaturesSection } from './components/FeaturesSection';
+// import ProductsSection from './components/ProductsSection';
 import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
 import Cart from './components/Cart';
@@ -18,11 +18,13 @@ const App: React.FC = () => {
     setCartItems(prev => {
       const existing = prev.find(i => i.id === product.id);
       if (existing) {
-        return prev.map(i => i.id === product.id ? { ...i, quantity: i.quantity + 1 } : i);
+        return prev.map(i =>
+          i.id === product.id ? { ...i, quantity: i.quantity + 1 } : i
+        );
       }
       return [...prev, { ...product, quantity: 1 }];
     });
-    // Brief flash of cart
+
     setCartOpen(true);
     setTimeout(() => {}, 300);
   };
@@ -30,7 +32,7 @@ const App: React.FC = () => {
   const handleUpdateQuantity = (id: number, delta: number) => {
     setCartItems(prev =>
       prev
-        .map(i => i.id === id ? { ...i, quantity: i.quantity + delta } : i)
+        .map(i => (i.id === id ? { ...i, quantity: i.quantity + delta } : i))
         .filter(i => i.quantity > 0)
     );
   };
@@ -51,7 +53,15 @@ const App: React.FC = () => {
       <main>
         <Hero />
         <CategoryBanner />
-        <ProductsSection searchQuery={searchQuery} onAddToCart={handleAddToCart} />
+
+        {/* Products section temporarily disabled */}
+        {/*
+        <ProductsSection
+          searchQuery={searchQuery}
+          onAddToCart={handleAddToCart}
+        />
+        */}
+
         <FeaturesSection />
         <ContactSection />
       </main>
