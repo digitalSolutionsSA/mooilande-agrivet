@@ -7,27 +7,12 @@ import { FeaturesSection } from './components/FeaturesSection';
 import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
 import Cart from './components/Cart';
-import { Product, CartItem } from './data/products';
+import { CartItem } from './data/products';
 
 const App: React.FC = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-
-  const handleAddToCart = (product: Product) => {
-    setCartItems(prev => {
-      const existing = prev.find(i => i.id === product.id);
-      if (existing) {
-        return prev.map(i =>
-          i.id === product.id ? { ...i, quantity: i.quantity + 1 } : i
-        );
-      }
-      return [...prev, { ...product, quantity: 1 }];
-    });
-
-    setCartOpen(true);
-    setTimeout(() => {}, 300);
-  };
 
   const handleUpdateQuantity = (id: number, delta: number) => {
     setCartItems(prev =>
