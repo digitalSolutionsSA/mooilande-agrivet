@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import CategoryBanner from './components/CategoryBanner';
-import { FeaturesSection } from './components/FeaturesSection';
+import FeaturesSection from './components/FeaturesSection';
+import TeamMarquee from './components/TeamMarquee';
 // import ProductsSection from './components/ProductsSection';
 import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
@@ -47,7 +48,9 @@ const App: React.FC = () => {
         />
         */}
 
+        
         <FeaturesSection />
+        <TeamMarquee />
         <ContactSection />
       </main>
 

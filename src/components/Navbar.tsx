@@ -29,19 +29,19 @@ const Navbar: React.FC<NavbarProps> = (_props) => {
   return (
     <>
       <div
-  style={{
-    background: 'var(--clr-moss)',
-    color: 'var(--clr-cream)',
-    textAlign: 'center',
-    padding: '8px 16px',
-    fontSize: '13px',
-    letterSpacing: '0.05em',
-    fontWeight: 500,
-    position: 'sticky',
-    top: 0,
-    zIndex: 1000,
-  }}
->
+        style={{
+          background: 'var(--clr-moss)',
+          color: 'var(--clr-cream)',
+          textAlign: 'center',
+          padding: '8px 16px',
+          fontSize: '13px',
+          letterSpacing: '0.05em',
+          fontWeight: 500,
+          position: 'sticky',
+          top: 0,
+          zIndex: 1000,
+        }}
+      >
         We offer Delivery & Courier Services Nationwide. For any inquiries feel
         free to contact us!
       </div>
@@ -122,13 +122,13 @@ const Navbar: React.FC<NavbarProps> = (_props) => {
           </a>
 
           <div
+            className="desktop-nav"
             style={{
               display: 'flex',
               gap: 32,
               alignItems: 'center',
               marginLeft: 'auto',
             }}
-            className="desktop-nav"
           >
             {navLinks.map(link => (
               <a
@@ -376,27 +376,33 @@ const Navbar: React.FC<NavbarProps> = (_props) => {
             position: relative !important;
             left: auto !important;
             top: auto !important;
-            width: 72px !important;
-            height: 72px !important;
-            pointer-events: auto !important;
+            width: 104px !important;
+            height: 104px !important;
+            pointerEvents: auto !important;
           }
 
           .name-logo {
-            height: 26px !important;
-            margin-left: 10px !important;
+            height: 44px !important;
+            margin-left: 16px !important;
             margin-top: 0 !important;
+          }
+        }
+
+        @media (max-width: 600px) {
+          .animals-logo {
+            width: 92px !important;
+            height: 92px !important;
+          }
+
+          .name-logo {
+            height: 40px !important;
+            margin-left: 14px !important;
           }
         }
 
         @media (min-width: 901px) {
           .mobile-menu-btn {
             display: none !important;
-          }
-        }
-
-        @media (max-width: 600px) {
-          .name-logo {
-            height: 24px !important;
           }
         }
       `}</style>

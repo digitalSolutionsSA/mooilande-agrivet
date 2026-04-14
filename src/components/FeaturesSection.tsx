@@ -9,9 +9,12 @@ const FeaturesSection: React.FC = () => {
         padding: 'var(--space-2xl) 0',
         position: 'relative',
         overflow: 'hidden',
+        minHeight: '65vh', // 👈 makes section taller
+        display: 'flex',   // 👈 enables vertical centering
+        alignItems: 'center',
         backgroundImage: "url('/overhead.jpeg')",
         backgroundSize: 'cover',
-        backgroundPosition: 'center 68%',
+        backgroundPosition: 'center 60%', // 👈 shows more of building
         backgroundRepeat: 'no-repeat',
       }}
     >
@@ -22,96 +25,26 @@ const FeaturesSection: React.FC = () => {
           background: `
             linear-gradient(
               to right,
-              rgba(250,246,237,0.96) 0%,
-              rgba(250,246,237,0.93) 30%,
-              rgba(250,246,237,0.82) 55%,
-              rgba(250,246,237,0.58) 78%,
-              rgba(250,246,237,0.38) 100%
+              rgba(250,246,237,0.88) 0%,
+              rgba(250,246,237,0.82) 30%,
+              rgba(250,246,237,0.68) 55%,
+              rgba(250,246,237,0.48) 78%,
+              rgba(250,246,237,0.28) 100%
             )
           `,
         }}
       />
 
-      <div className="container" style={{ position: 'relative' }}>
+      <div className="container" style={{ position: 'relative', width: '100%' }}>
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 80,
+            gridTemplateColumns: '1fr',
+            gap: 40,
             alignItems: 'center',
+            maxWidth: 700,
           }}
-          className="about-grid"
         >
-          {/* Image collage */}
-          <div style={{ position: 'relative', paddingBottom: '10%' }}>
-            <div
-              style={{
-                borderRadius: 'var(--radius-lg)',
-                overflow: 'hidden',
-                aspectRatio: '4/3',
-                boxShadow: 'var(--shadow-lg)',
-              }}
-            >
-              <img
-                src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80"
-                alt="Farm field"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-            </div>
-
-            <div
-              style={{
-                position: 'absolute',
-                bottom: 0,
-                right: -24,
-                width: '45%',
-                borderRadius: 'var(--radius-lg)',
-                overflow: 'hidden',
-                border: '4px solid var(--clr-cream)',
-                boxShadow: 'var(--shadow-md)',
-              }}
-            >
-              <img
-                src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=400&q=80"
-                alt="Vet care"
-                style={{ width: '100%', objectFit: 'cover', aspectRatio: '4/3' }}
-              />
-            </div>
-
-            <div
-              style={{
-                position: 'absolute',
-                top: 32,
-                left: -24,
-                background: 'var(--clr-white)',
-                borderRadius: 'var(--radius-md)',
-                padding: '16px 20px',
-                boxShadow: 'var(--shadow-md)',
-                textAlign: 'center',
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: 'var(--ff-display)',
-                  fontSize: '2rem',
-                  fontWeight: 700,
-                  color: 'var(--clr-moss)',
-                }}
-              >
-                15+
-              </div>
-              <div
-                style={{
-                  fontSize: '12px',
-                  color: 'var(--clr-text-muted)',
-                  fontWeight: 500,
-                }}
-              >
-                Years of Service
-              </div>
-            </div>
-          </div>
-
           {/* Text */}
           <div>
             <span
