@@ -1,12 +1,20 @@
 import React from 'react';
 
 const teamMembers = [
-  { name: 'Team Member 1', role: 'Sales & Support', image: '/team/team-1.jpg' },
-  { name: 'Team Member 2', role: 'Admin', image: '/team/team-2.jpg' },
-  { name: 'Team Member 3', role: 'Animal Health', image: '/team/team-3.jpg' },
-  { name: 'Team Member 4', role: 'Farm Supplies', image: '/team/team-4.jpg' },
-  { name: 'Team Member 5', role: 'Customer Care', image: '/team/team-5.jpg' },
-  { name: 'Team Member 6', role: 'Operations', image: '/team/team-6.jpg' },
+  { name: 'Adolph Barnard', role: 'General Manager', image: '/team/adolphbarnard.png' },
+  { name: 'Nrateng Mokoena', role: 'General Worker', image: '/team/nratengmokoena.png' },
+  { name: 'Carina Beukes', role: 'Shop Manager', image: '/team/carinabeukes.png' },
+  { name: 'Wanda Viljoen', role: 'Warehouse Manager', image: '/team/wandaviljoen.png' },
+  { name: 'Megan De Bruyn', role: 'Receiving Clerk', image: '/team/megandebruyn.png' },
+  { name: 'Neliswa Mbasane', role: 'Animal Health Specialist', image: '/team/neliswambasane.png' },
+  { name: 'Andries Blignaut', role: 'Warehouse Assistant', image: '/team/andriesblignaut.png' },
+  { name: 'Hardus Botha', role: 'Delivery Driver', image: '/team/hardusbotha.png' },
+  { name: 'Mariska Smith', role: 'General Worker', image: '/team/mariskasmith.png' },
+  { name: 'Dianke De Villiers', role: 'Social Media Assistant', image: '/team/diankedevilliers.png' },
+  { name: 'Charleen van Baalen', role: 'Accounting', image: '/team/charleenvanbaalen.png' },
+  { name: 'Annatjie Coetsee', role: 'Protek Sales Assistant', image: '/team/annatjiecoetsee.png' },
+  { name: 'Johnny Marjorie', role: 'Floor Assistant', image: '/team/johnnymarjorie.png' },
+  { name: 'Danike Perelaer', role: 'General Worker', image: '/team/danikeperelaer.png' },
 ];
 
 const marqueeItems = [...teamMembers, ...teamMembers];
