@@ -3,11 +3,19 @@ import { ArrowRight, ShieldCheck, Truck, Star } from 'lucide-react';
 
 const Hero: React.FC = () => {
   const [loaded, setLoaded] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
 
   const LOGO_LIGHT_GREEN = '#8FBF3A';
+  const HERO_VIDEO = '/hero-video.mp4';
+  const HERO_POSTER = '/hero-video.webp';
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 100);
+
+    // Preload the poster image immediately so the hero appears fast
+    const img = new Image();
+    img.src = HERO_POSTER;
+
     return () => clearTimeout(t);
   }, []);
 
@@ -29,6 +37,10 @@ const Hero: React.FC = () => {
         overflow: 'hidden',
         display: 'flex',
         alignItems: 'center',
+        backgroundImage: `url(${HERO_POSTER})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
       }}
     >
       {/* VIDEO BACKGROUND */}
@@ -37,6 +49,9 @@ const Hero: React.FC = () => {
         muted
         loop
         playsInline
+        preload="metadata"
+        poster={HERO_POSTER}
+        onLoadedData={() => setVideoReady(true)}
         style={{
           position: 'absolute',
           top: 0,
@@ -44,11 +59,15 @@ const Hero: React.FC = () => {
           width: '100%',
           height: '100%',
           objectFit: 'cover',
+          opacity: videoReady ? 1 : 0,
           transform: loaded ? 'scale(1)' : 'scale(1.06)',
-          transition: 'transform 1.4s cubic-bezier(0.4,0,0.2,1)',
+          transition:
+            'opacity 0.45s ease, transform 1.4s cubic-bezier(0.4,0,0.2,1)',
+          willChange: 'transform, opacity',
         }}
       >
-        <source src="/hero-video.mp4" type="video/mp4" />
+        <source src={HERO_VIDEO} type="video/mp4" />
+        Your browser does not support the video tag.
       </video>
 
       {/* Gradient overlay */}
