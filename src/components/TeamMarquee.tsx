@@ -1,20 +1,22 @@
 import React from 'react';
 
 const teamMembers = [
-  { name: 'Adolph Barnard', role: 'General Manager', image: '/team/adolphbarnard.png' },
-  { name: 'Nrateng Mokoena', role: 'General Worker', image: '/team/nratengmokoena.png' },
-  { name: 'Carina Beukes', role: 'Shop Manager', image: '/team/carinabeukes.png' },
-  { name: 'Wanda Viljoen', role: 'Warehouse Manager', image: '/team/wandaviljoen.png' },
+  { name: 'Adolph Barnard', role: 'Animal Nutritionist & Operations Manager', image: '/team/adolphbarnard.png' },
+  { name: 'Lydia Nrateng Mokoena', role: 'General Worker/ House Keeping', image: '/team/nratengmokoena.png' },
+  { name: 'Carina Beukes', role: 'Manager', image: '/team/carinabeukes.png' },
+  { name: 'Wanda Viljoen', role: 'Store Manager', image: '/team/wandaviljoen.png' },
   { name: 'Megan De Bruyn', role: 'Receiving Clerk', image: '/team/megandebruyn.png' },
-  { name: 'Neliswa Mbasane', role: 'Animal Health Specialist', image: '/team/neliswambasane.png' },
-  { name: 'Andries Blignaut', role: 'Warehouse Assistant', image: '/team/andriesblignaut.png' },
+  { name: 'Neliswa Mbasane', role: 'Animal Health Technician', image: '/team/neliswambasane.png' },
+  { name: 'Andries Blignaut', role: 'Store & Machine Operator', image: '/team/andriesblignaut.png' },
   { name: 'Hardus Botha', role: 'Delivery Driver', image: '/team/hardusbotha.png' },
-  { name: 'Mariska Smith', role: 'General Worker', image: '/team/mariskasmith.png' },
-  { name: 'Dianke De Villiers', role: 'Social Media Assistant', image: '/team/diankedevilliers.png' },
-  { name: 'Charleen van Baalen', role: 'Accounting', image: '/team/charleenvanbaalen.png' },
+  { name: 'Mariska Smith', role: 'General Worker/ Cashier', image: '/team/mariskasmith.png' },
+  { name: 'Dianke De Villiers', role: 'Social Media/ Cashier', image: '/team/diankedevilliers.png' },
+  { name: 'Charleen van Baalen', role: 'Bookeeper', image: '/team/charleenvanbaalen.png' },
   { name: 'Annatjie Coetsee', role: 'Protek Sales Assistant', image: '/team/annatjiecoetsee.png' },
-  { name: 'Johnny Marjorie', role: 'Floor Assistant', image: '/team/johnnymarjorie.png' },
-  { name: 'Danike Perelaer', role: 'General Worker', image: '/team/danikeperelaer.png' },
+  { name: 'Johnny Marjorie', role: 'General Worker/ Floor Assistant', image: '/team/johnnymarjorie.png' },
+  { name: 'Danike Perelaer', role: 'General Worker/ Cashier', image: '/team/danikeperelaer.png' },
+  { name: 'Moses Zolidwa', role: 'General Worker/ Store Assistant', image: '/team/moseszolidwa.png' },
+  { name: 'Simon Mokaloba', role: 'General Worker/ Store Assistant', image: '/team/simonmokaloba.png' },
 ];
 
 const marqueeItems = [...teamMembers, ...teamMembers];
