@@ -38,7 +38,7 @@ const CategoryBanner: React.FC = () => {
     {
       title: 'Hardware',
       description: 'Tools, fittings, fasteners and workshop essentials',
-      image: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800&q=80',
+      image: '../categories/hardware.jpg',
       color: 'rgba(28, 66, 22, 0.82)',
       accent: '#f0a53a',
       href: '#contact',
@@ -117,7 +117,7 @@ const CategoryBanner: React.FC = () => {
 },
 {
   title: 'Fencing, Steel & Wire',
-  description: 'Reliable pumping solutions for water supply, irrigation and pressure systems',
+  description: 'Quality fencing materials, steel posts, and wire solutions for farm boundaries and livestock management',
   image: '../categories/fencing.jpg',
   color: 'rgba(28, 66, 22, 0.82)',
   accent: '#f0a53a',
@@ -125,8 +125,16 @@ const CategoryBanner: React.FC = () => {
 },
 {
   title: 'Equine Supplements & Accessories',
-  description: 'Reliable pumping solutions for water supply, irrigation and pressure systems',
+  description: 'Premium health supplements, feeds, and accessories to keep your horses performing at their best',
   image: '../categories/horses.jpg',
+  color: 'rgba(28, 66, 22, 0.82)',
+  accent: '#f0a53a',
+  href: '#contact',
+},
+{
+  title: 'Safety & PPE',
+  description: 'Protective clothing, boots, gloves, and safety gear for farm workers and agricultural environments',
+  image: '../categories/safety.jpg',
   color: 'rgba(28, 66, 22, 0.82)',
   accent: '#f0a53a',
   href: '#contact',
