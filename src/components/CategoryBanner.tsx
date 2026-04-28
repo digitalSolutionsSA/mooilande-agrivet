@@ -110,7 +110,7 @@ const CategoryBanner: React.FC = () => {
     {
   title: 'Centrifugal Pumps & Pressure Pumps',
   description: 'Reliable pumping solutions for water supply, irrigation and pressure systems',
-  image: '../categories/pumps.jpg',
+  image: '../categories/pumps.jpeg',
   color: 'rgba(28, 66, 22, 0.82)',
   accent: '#f0a53a',
   href: '#contact',
