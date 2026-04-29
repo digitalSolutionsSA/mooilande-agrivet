@@ -7,49 +7,40 @@ const Hero: React.FC = () => {
 
   const LOGO_LIGHT_GREEN = '#8FBF3A';
   const HERO_VIDEO = '/hero-video.mp4';
-  const HERO_POSTER = '/hero-video.webp';
+  const HERO_POSTER = '/hero.webp'; // ✅ FIXED: was 'hero-video.webp'
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 100);
-
-    // Preload the poster image immediately so the hero appears fast
-    const img = new Image();
-    img.src = HERO_POSTER;
-
     return () => clearTimeout(t);
   }, []);
 
-  const slides = [
-    {
-      headline: 'Where the land\ncomes first.',
-      sub: 'Premium agrivet supplies for South African farms — from animal health to precision crop care.',
-    },
-  ];
-
-  const { headline, sub } = slides[0];
+  const headline = 'Where the land\ncomes first.';
+  const sub =
+    'Premium agrivet supplies for South African farms — from animal health to precision crop care.';
 
   return (
     <section
       id="hero"
       style={{
         position: 'relative',
-        minHeight: '90vh',
+        height: '100vh',
         overflow: 'hidden',
         display: 'flex',
         alignItems: 'center',
+        paddingBottom: '80px',
+        // ✅ Poster image always visible as the base layer — no flicker
         backgroundImage: `url(${HERO_POSTER})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
       }}
     >
-      {/* VIDEO BACKGROUND */}
+      {/* VIDEO BACKGROUND — fades IN on top of the poster once ready */}
       <video
         autoPlay
         muted
         loop
         playsInline
-        preload="metadata"
+        preload="auto" // ✅ FIXED: was 'metadata' — now buffers eagerly
         poster={HERO_POSTER}
         onLoadedData={() => setVideoReady(true)}
         style={{
@@ -59,15 +50,14 @@ const Hero: React.FC = () => {
           width: '100%',
           height: '100%',
           objectFit: 'cover',
+          // ✅ Starts invisible, crossfades in once ready — poster stays visible underneath
           opacity: videoReady ? 1 : 0,
-          transform: loaded ? 'scale(1)' : 'scale(1.06)',
-          transition:
-            'opacity 0.45s ease, transform 1.4s cubic-bezier(0.4,0,0.2,1)',
-          willChange: 'transform, opacity',
+          transition: 'opacity 0.8s ease',
+          // ✅ Removed the scale animation so video snaps to same frame as poster
+          transform: 'scale(1)',
         }}
       >
         <source src={HERO_VIDEO} type="video/mp4" />
-        Your browser does not support the video tag.
       </video>
 
       {/* Gradient overlay */}
@@ -80,7 +70,7 @@ const Hero: React.FC = () => {
         }}
       />
 
-      {/* Grain texture */}
+      {/* Grain */}
       <div
         style={{
           position: 'absolute',
@@ -91,7 +81,7 @@ const Hero: React.FC = () => {
         }}
       />
 
-      {/* Decorative circles */}
+      {/* Circles */}
       <div
         style={{
           position: 'absolute',
@@ -102,6 +92,7 @@ const Hero: React.FC = () => {
           height: 420,
           border: `1px solid rgba(143,191,58,0.2)`,
           borderRadius: '50%',
+          pointerEvents: 'none',
         }}
       />
       <div
@@ -114,6 +105,7 @@ const Hero: React.FC = () => {
           height: 340,
           border: `1px solid rgba(143,191,58,0.1)`,
           borderRadius: '50%',
+          pointerEvents: 'none',
         }}
       />
 
@@ -131,7 +123,7 @@ const Hero: React.FC = () => {
               gap: 8,
               background: 'rgba(143,191,58,0.15)',
               border: '1px solid rgba(143,191,58,0.4)',
-              borderRadius: 'var(--radius-full)',
+              borderRadius: '999px',
               padding: '6px 16px',
               marginBottom: 28,
               opacity: loaded ? 1 : 0,
@@ -145,7 +137,6 @@ const Hero: React.FC = () => {
                 height: 6,
                 borderRadius: '50%',
                 background: LOGO_LIGHT_GREEN,
-                display: 'inline-block',
               }}
             />
             <span
@@ -164,10 +155,9 @@ const Hero: React.FC = () => {
           {/* Headline */}
           <h1
             style={{
-              fontFamily: 'var(--ff-display)',
               fontSize: 'clamp(2.8rem, 6vw, 5rem)',
               fontWeight: 700,
-              color: 'var(--clr-white)',
+              color: 'white',
               lineHeight: 1.08,
               whiteSpace: 'pre-line',
               marginBottom: 24,
@@ -176,14 +166,13 @@ const Hero: React.FC = () => {
             {headline}
           </h1>
 
-          {/* Decorative rule */}
+          {/* Line */}
           <div
             style={{
               width: 80,
               height: 3,
               background: `linear-gradient(90deg, ${LOGO_LIGHT_GREEN}, transparent)`,
               marginBottom: 20,
-              borderRadius: 2,
             }}
           />
 
@@ -194,30 +183,26 @@ const Hero: React.FC = () => {
               lineHeight: 1.7,
               marginBottom: 40,
               maxWidth: 500,
-              fontWeight: 300,
             }}
           >
             {sub}
           </p>
 
-          {/* CTA buttons */}
+          {/* Buttons */}
           <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
             <a href="#products">
               <button
                 style={{
-                  display: 'inline-flex',
+                  display: 'flex',
                   alignItems: 'center',
                   gap: 10,
                   background: LOGO_LIGHT_GREEN,
                   color: '#1a1208',
                   padding: '14px 32px',
-                  borderRadius: 'var(--radius-full)',
+                  borderRadius: '999px',
                   fontWeight: 700,
-                  fontSize: '15px',
-                  letterSpacing: '0.02em',
                   border: 'none',
                   cursor: 'pointer',
-                  boxShadow: '0 8px 24px rgba(143,191,58,0.35)',
                 }}
               >
                 Shop Now <ArrowRight size={18} />
@@ -227,15 +212,10 @@ const Hero: React.FC = () => {
             <a href="#about">
               <button
                 style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 10,
                   background: 'transparent',
                   color: 'white',
                   padding: '13px 28px',
-                  borderRadius: 'var(--radius-full)',
-                  fontWeight: 500,
-                  fontSize: '15px',
+                  borderRadius: '999px',
                   border: '1.5px solid rgba(255,255,255,0.35)',
                   cursor: 'pointer',
                 }}
@@ -244,40 +224,10 @@ const Hero: React.FC = () => {
               </button>
             </a>
           </div>
-
-          {/* Stats */}
-          <div style={{ display: 'flex', gap: 40, marginTop: 56 }}>
-            {[
-              { num: '500+', label: 'Products' },
-              { num: '12k+', label: 'Happy Farmers' },
-              { num: '9', label: 'Provinces' },
-            ].map(stat => (
-              <div key={stat.label}>
-                <div
-                  style={{
-                    fontFamily: 'var(--ff-display)',
-                    fontSize: '1.8rem',
-                    fontWeight: 700,
-                    color: LOGO_LIGHT_GREEN,
-                  }}
-                >
-                  {stat.num}
-                </div>
-                <div
-                  style={{
-                    fontSize: '13px',
-                    color: 'rgba(255,255,255,0.55)',
-                  }}
-                >
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
-      {/* Trust badges */}
+      {/* Bottom Bar */}
       <div
         style={{
           position: 'absolute',
@@ -305,7 +255,6 @@ const Hero: React.FC = () => {
               gap: 8,
               color: 'white',
               fontSize: '13px',
-              fontWeight: 500,
             }}
           >
             {b.icon}

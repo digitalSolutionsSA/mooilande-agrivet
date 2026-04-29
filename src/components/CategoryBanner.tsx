@@ -86,7 +86,7 @@ const CategoryBanner: React.FC = () => {
     {
       title: 'Pet Food, Treats & Accessories',
       description: 'Pet nutrition, snacks, collars, bowls and everyday pet essentials',
-      image: '../categories/petfood.jpeg',
+      image: '../categories/pets.jpeg',
       color: 'rgba(28, 66, 22, 0.82)',
       accent: '#f0a53a',
       href: '#contact',
