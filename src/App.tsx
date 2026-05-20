@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import CategoryBanner from './components/CategoryBanner';
+import DeliveriesSection from './components/DeliveriesSection';
 import FeaturesSection from './components/FeaturesSection';
+import NewsletterBanner from './components/NewsletterBanner';
 import TeamMarquee from './components/TeamMarquee';
 // import ProductsSection from './components/ProductsSection';
 import ContactSection from './components/ContactSection';
@@ -51,6 +53,8 @@ const App: React.FC = () => {
         
         <FeaturesSection />
         <TeamMarquee />
+        <NewsletterBanner />
+        <DeliveriesSection />
         <ContactSection />
       </main>
 
