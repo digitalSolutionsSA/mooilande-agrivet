@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Construction, MessageCircle } from 'lucide-react';
 
 const CategoryBanner: React.FC = () => {
   const categories = [
@@ -108,37 +108,37 @@ const CategoryBanner: React.FC = () => {
       href: '#contact',
     },
     {
-  title: 'Centrifugal Pumps & Pressure Pumps',
-  description: 'Reliable pumping solutions for water supply, irrigation and pressure systems',
-  image: '../categories/pumps.jpeg',
-  color: 'rgba(28, 66, 22, 0.82)',
-  accent: '#f0a53a',
-  href: '#contact',
-},
-{
-  title: 'Fencing, Steel & Wire',
-  description: 'Quality fencing materials, steel posts, and wire solutions for farm boundaries and livestock management',
-  image: '../categories/fencing.jpg',
-  color: 'rgba(28, 66, 22, 0.82)',
-  accent: '#f0a53a',
-  href: '#contact',
-},
-{
-  title: 'Equine Supplements & Accessories',
-  description: 'Premium health supplements, feeds, and accessories to keep your horses performing at their best',
-  image: '../categories/horses.jpg',
-  color: 'rgba(28, 66, 22, 0.82)',
-  accent: '#f0a53a',
-  href: '#contact',
-},
-{
-  title: 'Safety & PPE',
-  description: 'Protective clothing, boots, gloves, and safety gear for farm workers and agricultural environments',
-  image: '../categories/safety.jpg',
-  color: 'rgba(28, 66, 22, 0.82)',
-  accent: '#f0a53a',
-  href: '#contact',
-},
+      title: 'Centrifugal Pumps & Pressure Pumps',
+      description: 'Reliable pumping solutions for water supply, irrigation and pressure systems',
+      image: '../categories/pumps.jpeg',
+      color: 'rgba(28, 66, 22, 0.82)',
+      accent: '#f0a53a',
+      href: '#contact',
+    },
+    {
+      title: 'Fencing, Steel & Wire',
+      description: 'Quality fencing materials, steel posts, and wire solutions for farm boundaries and livestock management',
+      image: '../categories/fencing.jpg',
+      color: 'rgba(28, 66, 22, 0.82)',
+      accent: '#f0a53a',
+      href: '#contact',
+    },
+    {
+      title: 'Equine Supplements & Accessories',
+      description: 'Premium health supplements, feeds, and accessories to keep your horses performing at their best',
+      image: '../categories/horses.jpg',
+      color: 'rgba(28, 66, 22, 0.82)',
+      accent: '#f0a53a',
+      href: '#contact',
+    },
+    {
+      title: 'Safety & PPE',
+      description: 'Protective clothing, boots, gloves, and safety gear for farm workers and agricultural environments',
+      image: '../categories/safety.jpg',
+      color: 'rgba(28, 66, 22, 0.82)',
+      accent: '#f0a53a',
+      href: '#contact',
+    },
   ];
 
   return (
@@ -193,9 +193,49 @@ const CategoryBanner: React.FC = () => {
               color: 'rgba(255,255,255,0.85)',
             }}
           >
-            Explore Mooilande AgriVet’s full range of departments for farm, home,
+            Explore Mooilande AgriVet's full range of departments for farm, home,
             garden, pet and outdoor needs.
           </p>
+
+          <div
+            style={{
+              display: 'inline-flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 10,
+              marginTop: 24,
+              background: 'rgba(240, 165, 58, 0.12)',
+              border: '1.5px solid rgba(240, 165, 58, 0.45)',
+              borderRadius: '14px',
+              padding: '14px 28px',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Construction size={16} color="#f0a53a" />
+              <span style={{ fontSize: '14px', fontWeight: 700, color: '#f0a53a', letterSpacing: '0.02em' }}>
+                Category population under construction — coming soon!
+              </span>
+            </div>
+            <p style={{ margin: 0, fontSize: '13px', color: 'rgba(255,255,255,0.75)' }}>
+              For any queries, feel free to{' '}
+              <a
+                href="#contact"
+                style={{ color: '#f0a53a', fontWeight: 600, textDecoration: 'underline' }}
+              >
+                click here
+              </a>
+              {' '}to get in contact, or reach us on{' '}
+              <a
+                href="https://wa.me/27789337152"
+                target="_blank"
+                rel="noreferrer"
+                style={{ color: '#25D366', fontWeight: 600, textDecoration: 'underline', display: 'inline-flex', alignItems: 'center', gap: 3 }}
+              >
+                <MessageCircle size={13} /> WhatsApp
+              </a>
+              .
+            </p>
+          </div>
         </div>
 
         <div
