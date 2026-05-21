@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
   const links = {
     Shop: ['Animal Health', 'Crop & Plant', 'Equipment', 'Feed & Nutrition', 'Special Offers'],
     Company: ['About Us', 'Our Team', 'Careers', 'Blog', 'Contact'],
-    Support: ['FAQ', 'Delivery Info', 'Returns Policy', 'Track Order', 'Wholesale Enquiries'],
+    Support: ['FAQ', 'Delivery Info', 'Returns & T&Cs', 'Track Order', 'Wholesale Enquiries'],
   };
 
   return (
@@ -147,23 +147,30 @@ const Footer: React.FC = () => {
                   margin: 0,
                 }}
               >
-                {items.map(item => (
-                  <li key={item}>
-                    <a
-                      href="#"
-                      style={{
-                        fontSize: '14px',
-                        color: 'rgba(255,255,255,0.75)',
-                        transition: 'color 0.2s',
-                        textDecoration: 'none',
-                      }}
-                      onMouseEnter={e => (e.currentTarget.style.color = LOGO_ORANGE)}
-                      onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.75)')}
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ))}
+                {items.map(item => {
+                  const hrefMap: Record<string, string> = {
+                    'Contact': '#contact',
+                    'Delivery Info': '#deliveries',
+                    'Returns & T&Cs': '#terms',
+                  };
+                  return (
+                    <li key={item}>
+                      <a
+                        href={hrefMap[item] ?? '#'}
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255,255,255,0.75)',
+                          transition: 'color 0.2s',
+                          textDecoration: 'none',
+                        }}
+                        onMouseEnter={e => (e.currentTarget.style.color = LOGO_ORANGE)}
+                        onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.75)')}
+                      >
+                        {item}
+                      </a>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}
@@ -189,7 +196,7 @@ const Footer: React.FC = () => {
             {['Privacy Policy', 'Terms of Use', 'Cookie Policy'].map(link => (
               <a
                 key={link}
-                href="#"
+                href={link === 'Terms of Use' ? '#terms' : '#'}
                 style={{
                   color: 'rgba(255,255,255,0.6)',
                   transition: 'color 0.2s',

@@ -63,7 +63,7 @@ const ContactSection: React.FC = () => {
                   {
                     icon: <Mail size={20} />,
                     title: 'Email Us',
-                    text: 'info@mooilandeagrivet.co.za',
+                    text: 'admin@mooilande.co.za',
                   },
                   {
                     icon: <Clock size={20} />,

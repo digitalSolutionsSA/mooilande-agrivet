@@ -8,6 +8,7 @@ import NewsletterBanner from './components/NewsletterBanner';
 import TeamMarquee from './components/TeamMarquee';
 // import ProductsSection from './components/ProductsSection';
 import ContactSection from './components/ContactSection';
+import TermsSection from './components/TermsSection';
 import Footer from './components/Footer';
 import Cart from './components/Cart';
 import { CartItem } from './data/products';
@@ -56,6 +57,7 @@ const App: React.FC = () => {
         <NewsletterBanner />
         <DeliveriesSection />
         <ContactSection />
+        <TermsSection />
       </main>
 
       <Footer />

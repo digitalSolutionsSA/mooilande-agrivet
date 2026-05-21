@@ -80,7 +80,7 @@ const DeliveriesSection: React.FC = () => {
                 marginBottom: 16,
               }}
             >
-              We Deliver Anywhere<br />in South Africa
+              Nationwide Courier &amp;<br />Delivery Services
             </h2>
 
             <div
@@ -96,12 +96,11 @@ const DeliveriesSection: React.FC = () => {
                 color: 'rgba(255,255,255,0.78)',
                 fontSize: '1.05rem',
                 lineHeight: 1.7,
-                maxWidth: 560,
+                maxWidth: 600,
                 margin: '0 auto',
               }}
             >
-              From the Highveld to the Cape — we ship premium agrivet supplies to every corner of South Africa.
-              Contact us to arrange your delivery today.
+              Delivery rates are based on distance from Mooilande AgriVet. Contact us to arrange your delivery today.
             </p>
           </div>
 
@@ -110,8 +109,8 @@ const DeliveriesSection: React.FC = () => {
             {[
               {
                 icon: <MapPin size={26} />,
-                title: 'Nationwide Coverage',
-                text: 'We deliver to every province across South Africa.',
+                title: 'Nationwide Delivery',
+                text: 'We deliver to every province across South Africa. Delivery charge is based on distance from Mooilande AgriVet.',
               },
               {
                 icon: <Package size={26} />,
@@ -132,7 +131,7 @@ const DeliveriesSection: React.FC = () => {
               <a
                 key={card.title}
                 href="#contact"
-                style={{ textDecoration: 'none' }}
+                style={{ textDecoration: 'none', display: 'block', height: '100%' }}
               >
                 <div
                   style={{
@@ -143,6 +142,8 @@ const DeliveriesSection: React.FC = () => {
                     textAlign: 'center',
                     cursor: 'pointer',
                     transition: 'background 0.2s, border-color 0.2s, transform 0.2s',
+                    height: '100%',
+                    boxSizing: 'border-box',
                   }}
                   onMouseEnter={e => {
                     (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.13)';
@@ -177,6 +178,22 @@ const DeliveriesSection: React.FC = () => {
                 </div>
               </a>
             ))}
+          </div>
+          {/* Large-item notice */}
+          <div
+            style={{
+              marginTop: 32,
+              background: 'rgba(255,255,255,0.07)',
+              border: '1px solid rgba(143,191,58,0.3)',
+              borderRadius: '12px',
+              padding: '18px 28px',
+              textAlign: 'center',
+            }}
+          >
+            <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '14px', lineHeight: 1.7, margin: 0 }}>
+              <span style={{ color: LOGO_LIGHT_GREEN, fontWeight: 700 }}>Shipping &amp; courier services</span> on feed loads and other applicable large items are available at the discretion of Mooilande AgriVet.{' '}
+              <span style={{ color: 'rgba(255,255,255,0.6)' }}>Additional charges may apply.</span>
+            </p>
           </div>
         </div>
       </div>
