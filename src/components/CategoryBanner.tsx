@@ -226,7 +226,7 @@ const CategoryBanner: React.FC = () => {
               </a>
               {' '}to get in contact, or reach us on{' '}
               <a
-                href="https://wa.me/27789337152"
+                href="https://wa.me/27635927171"
                 target="_blank"
                 rel="noreferrer"
                 style={{ color: '#25D366', fontWeight: 600, textDecoration: 'underline', display: 'inline-flex', alignItems: 'center', gap: 3 }}

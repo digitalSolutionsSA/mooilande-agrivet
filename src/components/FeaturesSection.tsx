@@ -103,7 +103,7 @@ const FeaturesSection: React.FC = () => {
             <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
               {[
                 { icon: <Leaf size={18} />, label: 'Eco-conscious sourcing' },
-                { icon: <Users size={18} />, label: '12,000+ happy farmers' },
+                { icon: <Users size={18} />, label: '1,000+ happy farmers' },
               ].map(b => (
                 <div
                   key={b.label}

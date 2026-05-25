@@ -197,7 +197,7 @@ const Navbar: React.FC<NavbarProps> = (_props) => {
             </a>
 
             <a
-              href="https://wa.me/27789337152"
+              href="https://wa.me/27635927171"
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -290,7 +290,7 @@ const Navbar: React.FC<NavbarProps> = (_props) => {
             </a>
 
             <a
-              href="https://wa.me/27789337152"
+              href="https://wa.me/27635927171"
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -301,7 +301,7 @@ const Navbar: React.FC<NavbarProps> = (_props) => {
                 padding: '4px 0 0',
               }}
             >
-              WhatsApp: 078 933 7152
+              WhatsApp: 063 592 7171
             </a>
           </div>
         )}

@@ -58,7 +58,7 @@ const ContactSection: React.FC = () => {
                   {
                     icon: <Phone size={20} />,
                     title: 'Call Us',
-                    text: 'Landline: 016 110 0861\nCell / WhatsApp: 078 933 7152',
+                    text: 'Landline: 016 110 0861\nCell / WhatsApp: 063 592 7171',
                   },
                   {
                     icon: <Mail size={20} />,
