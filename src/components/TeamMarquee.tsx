@@ -6,7 +6,6 @@ const teamMembers = [
   { name: 'Carina Beukes', role: 'Manager', image: '/team/carinabeukes.png' },
   { name: 'Wanda Viljoen', role: 'Store Manager', image: '/team/wandaviljoen.png' },
   { name: 'Megan De Bruyn', role: 'Receiving Clerk', image: '/team/megandebruyn.png' },
-  { name: 'Neliswa Mbasane', role: 'Animal Health Technician', image: '/team/neliswambasane.png' },
   { name: 'Andries Blignaut', role: 'Store & Machine Operator', image: '/team/andriesblignaut.png' },
   { name: 'Hardus Botha', role: 'Delivery Driver', image: '/team/hardusbotha.png' },
   { name: 'Mariska Smith', role: 'General Worker / Cashier', image: '/team/mariskasmith.png' },
