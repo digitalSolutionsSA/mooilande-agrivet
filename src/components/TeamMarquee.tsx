@@ -9,7 +9,7 @@ const teamMembers = [
   { name: 'Andries Blignaut', role: 'Store & Machine Operator', image: '/team/andriesblignaut.png' },
   { name: 'Hardus Botha', role: 'Delivery Driver', image: '/team/hardusbotha.png' },
   { name: 'Mariska Smith', role: 'General Worker / Cashier', image: '/team/mariskasmith.png' },
-  { name: 'Dianke De Villiers', role: 'Social Media / Cashier', image: '/team/diankedevilliers.png' },
+  { name: 'Dianke De Villiers', role: 'Animal Health / Social Media', image: '/team/diankedevilliers.png' },
   { name: 'Charleen van Baalen', role: 'Bookkeeper', image: '/team/charleenvanbaalen.png' },
   { name: 'Annatjie Coetsee', role: 'Protek Sales Assistant', image: '/team/annatjiecoetsee.png' },
   { name: 'Johnny Marjorie', role: 'General Worker / Floor Assistant', image: '/team/johnnymarjorie.png' },
