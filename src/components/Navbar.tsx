@@ -1,411 +1,269 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X, Phone } from 'lucide-react';
-import { CartItem } from '../data/products';
+import React, { Suspense, lazy, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { ArrowUpRight, ChevronDown, MessageCircle, Phone, Search, ShoppingCart } from 'lucide-react';
+import { gsap, ScrollTrigger, getLenis } from '../lib/motion';
+import { CONTACT, DEPARTMENTS, departmentHref, deptImage } from '../data/site';
+import { usePath } from '../lib/router';
+import { cart, cartCount, useCart } from '../lib/cart';
 
-interface NavbarProps {
-  cartItems: CartItem[];
-  onCartOpen: () => void;
-  searchQuery: string;
-  onSearchChange: (q: string) => void;
+// Search pulls in the database client, so it loads only when first opened
+const SearchPanel = lazy(() => import('./Search'));
+
+// Departments has its own dropdown; these are the plain links after it
+const LINKS = [
+  { label: 'About', href: '/#about' },
+  { label: 'Team', href: '/#team' },
+  { label: 'Deliveries', href: '/#deliveries' },
+  { label: 'Contact', href: '/#contact' },
+];
+
+interface Props {
+  ready: boolean;
 }
 
-const Navbar: React.FC<NavbarProps> = (_props) => {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+const Navbar: React.FC<Props> = ({ ready }) => {
+  const root = useRef<HTMLElement>(null);
+  const menu = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+  const [deptsOpen, setDeptsOpen] = useState(false); // desktop dropdown
+  const [mobileDepts, setMobileDepts] = useState(false); // expanded list in the mobile menu
+  const closeTimer = useRef<number>();
+  const tl = useRef<gsap.core.Timeline>();
+  const path = usePath();
+  const count = cartCount(useCart().items);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchLoaded, setSearchLoaded] = useState(false); // load the search code on first use
 
+  const openSearch = useCallback(() => {
+    setOpen(false);
+    setDeptsOpen(false);
+    setSearchLoaded(true);
+    setSearchOpen(true);
+  }, []);
+  const closeSearch = useCallback(() => setSearchOpen(false), []);
+
+  // "/" or Ctrl/⌘+K opens search from anywhere, unless the visitor is typing in a field
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 60);
-    window.addEventListener('scroll', handler);
-    return () => window.removeEventListener('scroll', handler);
+    const onKey = (e: KeyboardEvent) => {
+      const typing = (e.target as HTMLElement).closest?.('input, textarea, select, [contenteditable]');
+      if ((e.key === 'k' && (e.metaKey || e.ctrlKey)) || (e.key === '/' && !typing)) {
+        e.preventDefault();
+        openSearch();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [openSearch]);
+
+  // Close everything whenever the page changes
+  useEffect(() => {
+    setDeptsOpen(false);
+    setOpen(false);
+  }, [path]);
+
+  // Escape closes the dropdown
+  useEffect(() => {
+    if (!deptsOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setDeptsOpen(false);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [deptsOpen]);
+
+  // Hover opens straight away; a short delay before closing lets the pointer cross the gap
+  const hoverOpen = () => {
+    window.clearTimeout(closeTimer.current);
+    setDeptsOpen(true);
+  };
+  const hoverClose = () => {
+    closeTimer.current = window.setTimeout(() => setDeptsOpen(false), 160);
+  };
+
+  // Entrance, condensed state, hide on scroll down / show on scroll up (desktop only)
+  useLayoutEffect(() => {
+    if (!ready) return;
+    const el = root.current!;
+    const ctx = gsap.context(() => {
+      // Entrance animates the inner bar, hide/show animates the header, so they never fight
+      gsap.from('.nav__inner', { yPercent: -160, duration: 1.2, ease: 'expo.out', delay: 0.6 });
+
+      let hidden = false;
+      const setHidden = (h: boolean) => {
+        if (h === hidden) return;
+        hidden = h;
+        gsap.to(el, { yPercent: h ? -130 : 0, duration: 0.45, ease: 'power3.inOut', overwrite: true });
+      };
+
+      // Phones and tablets keep the bar on screen the whole time (search, cart and menu stay in reach)
+      const phone = window.matchMedia('(max-width: 960px)');
+
+      ScrollTrigger.create({
+        start: 0,
+        end: 'max',
+        onUpdate: self => {
+          const y = self.scroll();
+          el.classList.toggle('is-solid', y > 80);
+          setHidden(!phone.matches && self.direction === 1 && y > 600);
+        },
+        onLeaveBack: () => {
+          el.classList.remove('is-solid');
+          setHidden(false);
+        },
+      });
+    }, el);
+    return () => ctx.revert();
+  }, [ready]);
+
+  // Fullscreen mobile menu
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      tl.current = gsap.timeline({ paused: true })
+        .set(menu.current, { visibility: 'visible' })
+        .fromTo(menu.current, { clipPath: 'circle(0% at calc(100% - 40px) 40px)' }, { clipPath: 'circle(150% at calc(100% - 40px) 40px)', duration: 0.9, ease: 'expo.inOut' })
+        .from('.menu__link', { yPercent: 120, duration: 0.8, ease: 'expo.out', stagger: 0.06 }, '-=0.4')
+        .from('.menu__foot > *', { y: 20, autoAlpha: 0, duration: 0.6, stagger: 0.06 }, '-=0.5');
+    }, menu);
+    return () => ctx.revert();
   }, []);
 
-  const navLinks = [
-    { label: 'Departments', href: '#departments' },
-    { label: 'Deliveries', href: '#deliveries' },
-    { label: 'About', href: '#about' },
-    { label: 'Contact', href: '#contact' },
-  ];
+  useEffect(() => {
+    if (open) {
+      tl.current?.timeScale(1).play();
+      getLenis()?.stop();
+    } else {
+      tl.current?.timeScale(1.6).reverse();
+      getLenis()?.start();
+    }
+  }, [open]);
 
   return (
     <>
-      <div
-        style={{
-          background: 'var(--clr-moss)',
-          color: 'var(--clr-cream)',
-          textAlign: 'center',
-          padding: '8px 16px',
-          fontSize: '13px',
-          letterSpacing: '0.05em',
-          fontWeight: 500,
-          position: 'sticky',
-          top: 0,
-          zIndex: 1000,
-        }}
-      >
-        We offer Delivery & Courier Services Nationwide. For any inquiries feel
-        free to contact us!
-      </div>
-
-      <nav
-        style={{
-          position: 'sticky',
-          top: 37,
-          zIndex: 1002,
-          background: scrolled ? 'rgba(250,246,237,0.97)' : 'var(--clr-cream)',
-          backdropFilter: scrolled ? 'blur(12px)' : 'none',
-          borderBottom: `1px solid ${
-            scrolled ? 'rgba(168,200,69,0.3)' : 'transparent'
-          }`,
-          transition: 'all 0.4s ease',
-          boxShadow: scrolled ? 'var(--shadow-sm)' : 'none',
-          overflow: 'visible',
-        }}
-      >
-        <div
-          className="container navbar-inner"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '10px 32px',
-            gap: 16,
-            position: 'relative',
-            minHeight: 72,
-            overflow: 'visible',
-          }}
-        >
-          <a
-            href="#hero"
-            className="navbar-logo"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              textDecoration: 'none',
-              position: 'relative',
-              flexShrink: 0,
-              minWidth: 380,
-              height: 72,
-              overflow: 'visible',
-            }}
-          >
-            <img
-              src="/animals-logo.png"
-              alt="Mooilande Logo"
-              className="animals-logo"
-              style={{
-                position: 'absolute',
-                left: -370,
-                top: -164,
-                width: 300,
-                height: 500,
-                objectFit: 'contain',
-                display: 'block',
-                zIndex: 2003,
-                pointerEvents: 'none',
-              }}
-            />
-
-            <img
-              src="/name-logo.png"
-              alt="Mooilande AgriVet"
-              className="name-logo"
-              style={{
-                height: 128,
-                objectFit: 'contain',
-                display: 'block',
-                marginLeft: -92,
-                marginTop: 4,
-                position: 'relative',
-                zIndex: 3,
-              }}
-            />
+      {searchLoaded && (
+        <Suspense fallback={null}>
+          <SearchPanel open={searchOpen} onClose={closeSearch} />
+        </Suspense>
+      )}
+      <header className="nav" ref={root}>
+        <div className="nav__inner">
+          <a href="/" className="nav__brand" aria-label="Mooilande AgriVet home">
+            <img src="/animals-logo.webp" alt="" className="nav__mark" width={40} height={40} />
+            <img src="/name-logo.webp" alt="Mooilande AgriVet" className="nav__name" height={28} />
           </a>
 
-          <div
-            className="desktop-nav"
-            style={{
-              display: 'flex',
-              gap: 32,
-              alignItems: 'center',
-              marginLeft: 'auto',
-            }}
-          >
-            {navLinks.map(link => (
-              <a
-                key={link.label}
-                href={link.href}
-                style={{
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  color: 'var(--clr-text-muted)',
-                  transition: 'color 0.2s',
-                  position: 'relative',
-                  textDecoration: 'none',
-                }}
-                onMouseEnter={e =>
-                  (e.currentTarget.style.color = 'var(--clr-moss)')
-                }
-                onMouseLeave={e =>
-                  (e.currentTarget.style.color = 'var(--clr-text-muted)')
-                }
+          <nav className="nav__links" aria-label="Main">
+            <div className="nav__dd" onMouseEnter={hoverOpen} onMouseLeave={hoverClose}>
+              <button
+                className={`nav__link nav__dd-toggle ${deptsOpen ? 'is-open' : ''}`}
+                onClick={() => setDeptsOpen(o => !o)}
+                aria-expanded={deptsOpen}
+                aria-controls="nav-departments"
               >
-                {link.label}
+                <span data-text="Departments">Departments</span>
+                <ChevronDown size={15} className="nav__dd-caret" />
+              </button>
+            </div>
+            {LINKS.map(l => (
+              <a key={l.href} href={l.href} className="nav__link">
+                <span data-text={l.label}>{l.label}</span>
               </a>
             ))}
-          </div>
+          </nav>
 
-          <div
-            className="navbar-contact-actions"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-              marginLeft: 24,
-              flexShrink: 0,
-            }}
-          >
-            <a
-              href="tel:0161100861"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                fontSize: '14px',
-                fontWeight: 600,
-                color: 'var(--clr-moss)',
-                textDecoration: 'none',
-                padding: '10px 14px',
-                border: '1.5px solid rgba(46, 90, 23, 0.18)',
-                borderRadius: '999px',
-                background: 'rgba(168, 200, 69, 0.08)',
-                transition: 'all 0.2s ease',
-                whiteSpace: 'nowrap',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = 'rgba(168, 200, 69, 0.16)';
-                e.currentTarget.style.borderColor = 'rgba(46, 90, 23, 0.32)';
-                e.currentTarget.style.transform = 'translateY(-1px)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = 'rgba(168, 200, 69, 0.08)';
-                e.currentTarget.style.borderColor = 'rgba(46, 90, 23, 0.18)';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-            >
-              <Phone size={15} />
-              <span>016 110 0861</span>
+          <div className="nav__actions">
+            <a href={CONTACT.phoneHref} className="nav__phone">
+              <Phone size={15} /> {CONTACT.phone}
             </a>
-
-            <a
-              href="https://wa.me/27635927171"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                fontSize: '14px',
-                fontWeight: 700,
-                color: 'white',
-                textDecoration: 'none',
-                padding: '10px 16px',
-                borderRadius: '999px',
-                background: 'var(--clr-moss)',
-                border: '1.5px solid var(--clr-moss)',
-                transition: 'all 0.2s ease',
-                whiteSpace: 'nowrap',
-                boxShadow: '0 8px 18px rgba(46, 90, 23, 0.18)',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.transform = 'translateY(-1px) scale(1.02)';
-                e.currentTarget.style.boxShadow =
-                  '0 12px 24px rgba(46, 90, 23, 0.24)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                e.currentTarget.style.boxShadow =
-                  '0 8px 18px rgba(46, 90, 23, 0.18)';
-              }}
-            >
-              <span>WhatsApp Us</span>
-            </a>
-
+            <button type="button" className="nav__cart" onClick={cart.open} aria-label={`Cart, ${count} ${count === 1 ? 'item' : 'items'}`}>
+              <ShoppingCart size={19} />
+              {count > 0 && <span key={count} className="nav__cart-count">{count > 99 ? '99+' : count}</span>}
+            </button>
+            <button type="button" className="nav__search" onClick={openSearch} aria-label="Search products" aria-haspopup="dialog">
+              <Search size={18} />
+              <span>Search products…</span>
+            </button>
             <button
-              className="mobile-menu-btn"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              style={{
-                color: 'var(--clr-text)',
-                display: 'flex',
-                alignItems: 'center',
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-              }}
+              className={`nav__burger ${open ? 'is-open' : ''}`}
+              onClick={() => setOpen(o => !o)}
+              aria-label={open ? 'Close menu' : 'Open menu'}
+              aria-expanded={open}
             >
-              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+              <span />
+              <span />
             </button>
           </div>
-        </div>
 
-        {mobileOpen && (
+          {/* Departments dropdown: spans the width of the bar */}
           <div
-            style={{
-              background: 'var(--clr-cream)',
-              borderTop: '1px solid var(--clr-grey-light)',
-              padding: '16px 24px 24px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 16,
+            id="nav-departments"
+            className={`ddpanel ${deptsOpen ? 'is-open' : ''}`}
+            onMouseEnter={hoverOpen}
+            onMouseLeave={hoverClose}
+            onBlur={e => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) setDeptsOpen(false);
             }}
           >
-            {navLinks.map(link => (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                style={{
-                  fontSize: '16px',
-                  fontWeight: 500,
-                  color: 'var(--clr-text)',
-                  padding: '8px 0',
-                  borderBottom: '1px solid var(--clr-grey-light)',
-                  textDecoration: 'none',
-                }}
-              >
-                {link.label}
+            <div className="ddpanel__intro">
+              <span className="eyebrow eyebrow--lime">Shop by department</span>
+              <p className="ddpanel__title">Everything the farm needs, under one roof.</p>
+              <a href="/#departments" className="btn btn--sm btn--lime" onClick={() => setDeptsOpen(false)}>
+                All departments <ArrowUpRight size={15} />
               </a>
-            ))}
-
-            <a
-              href="tel:0161100861"
-              style={{
-                fontSize: '16px',
-                fontWeight: 600,
-                color: 'var(--clr-moss)',
-                textDecoration: 'none',
-                padding: '12px 0 4px',
-              }}
-            >
-              Call: 016 110 0861
-            </a>
-
-            <a
-              href="https://wa.me/27635927171"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                fontSize: '16px',
-                fontWeight: 700,
-                color: 'var(--clr-moss)',
-                textDecoration: 'none',
-                padding: '4px 0 0',
-              }}
-            >
-              WhatsApp: 063 592 7171
-            </a>
+            </div>
+            <ul className="ddpanel__grid">
+              {DEPARTMENTS.map((d, i) => (
+                <li key={d.slug} style={{ '--i': i } as React.CSSProperties}>
+                  <a
+                    href={departmentHref(d)}
+                    className={`ddpanel__item ${path === departmentHref(d) ? 'is-current' : ''}`}
+                    onClick={() => setDeptsOpen(false)}
+                    tabIndex={deptsOpen ? 0 : -1}
+                  >
+                    <img src={deptImage(d, 'xs')} alt="" loading="lazy" decoding="async" width={40} height={40} />
+                    <span>{d.title}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
-        )}
-      </nav>
+        </div>
+      </header>
 
-      <style>{`
-        @media (max-width: 1280px) {
-          .desktop-nav {
-            gap: 22px !important;
-          }
-
-          .navbar-contact-actions a {
-            font-size: 13px !important;
-            padding: 9px 12px !important;
-          }
-        }
-
-        @media (max-width: 1100px) {
-          .navbar-logo {
-            min-width: 320px !important;
-          }
-
-          .animals-logo {
-            left: -78px !important;
-            top: -48px !important;
-            width: 108px !important;
-            height: 108px !important;
-          }
-
-          .name-logo {
-            height: 34px !important;
-            margin-left: 18px !important;
-          }
-
-          .desktop-nav {
-            gap: 18px !important;
-          }
-
-          .navbar-contact-actions {
-            gap: 8px !important;
-          }
-
-          .navbar-contact-actions a:first-child {
-            padding: 9px 10px !important;
-          }
-
-          .navbar-contact-actions a:last-of-type {
-            padding: 9px 12px !important;
-          }
-        }
-
-        @media (max-width: 900px) {
-          .desktop-nav {
-            display: none !important;
-          }
-
-          .navbar-contact-actions a {
-            display: none !important;
-          }
-
-          .navbar-inner {
-            min-height: 74px !important;
-            padding: 12px 20px !important;
-          }
-
-          .navbar-logo {
-            min-width: auto !important;
-            height: 64px !important;
-          }
-
-          .animals-logo {
-            position: relative !important;
-            left: auto !important;
-            top: auto !important;
-            width: 104px !important;
-            height: 104px !important;
-            pointerEvents: auto !important;
-          }
-
-          .name-logo {
-            height: 44px !important;
-            margin-left: 16px !important;
-            margin-top: 0 !important;
-          }
-        }
-
-        @media (max-width: 600px) {
-          .animals-logo {
-            width: 92px !important;
-            height: 92px !important;
-          }
-
-          .name-logo {
-            height: 40px !important;
-            margin-left: 14px !important;
-          }
-        }
-
-        @media (min-width: 901px) {
-          .mobile-menu-btn {
-            display: none !important;
-          }
-        }
-      `}</style>
+      <div className="menu" ref={menu} aria-hidden={!open} data-lenis-prevent>
+        <nav className="menu__nav">
+          <div className="menu__row">
+            <button
+              className={`menu__link menu__toggle ${mobileDepts ? 'is-open' : ''}`}
+              onClick={() => setMobileDepts(o => !o)}
+              aria-expanded={mobileDepts}
+            >
+              <small>01</small>
+              Departments
+              <ChevronDown size={28} className="menu__caret" />
+            </button>
+          </div>
+          <ul className={`menu__depts ${mobileDepts ? 'is-open' : ''}`}>
+            {DEPARTMENTS.map(d => (
+              <li key={d.slug}>
+                <a href={departmentHref(d)} onClick={() => setOpen(false)}>
+                  <img src={deptImage(d, 'xs')} alt="" loading="lazy" decoding="async" width={40} height={40} />
+                  {d.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+          {LINKS.map((l, i) => (
+            <div key={l.href} className="menu__row">
+              <a href={l.href} className="menu__link" onClick={() => setOpen(false)}>
+                <small>0{i + 2}</small>
+                {l.label}
+              </a>
+            </div>
+          ))}
+        </nav>
+        <div className="menu__foot">
+          <a href={CONTACT.phoneHref}><Phone size={16} /> {CONTACT.phone}</a>
+          <a href={CONTACT.whatsappHref} target="_blank" rel="noreferrer"><MessageCircle size={16} /> {CONTACT.cell}</a>
+          <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+        </div>
+      </div>
     </>
   );
 };

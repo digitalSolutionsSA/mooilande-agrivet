@@ -1,420 +1,171 @@
-import React, { useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { ArrowUp, ArrowUpRight, Briefcase, Facebook, MessageCircle, X } from 'lucide-react';
+import { gsap, SplitText, getLenis, prefersReducedMotion } from '../lib/motion';
+import { CONTACT, VACANCIES, Vacancy } from '../data/site';
 
-interface Vacancy {
-  title: string;
-  description: string;
-}
+const EXPLORE = [
+  { label: 'Departments', href: '/#departments' },
+  { label: 'About us', href: '/#about' },
+  { label: 'Our team', href: '/#team' },
+  { label: 'Delivery info', href: '/#deliveries' },
+  { label: 'Returns & T&Cs', href: '/#terms' },
+  { label: 'Contact', href: '/#contact' },
+];
 
 const VacancyModal: React.FC<{ vacancy: Vacancy; onClose: () => void }> = ({ vacancy, onClose }) => {
-  const LOGO_GREEN = '#3F6B2A';
-  const LOGO_ORANGE = '#D97A1E';
+  const root = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    getLenis()?.stop();
+    const ctx = gsap.context(() => {
+      gsap.from('.modal__backdrop', { opacity: 0, duration: 0.4 });
+      gsap.from('.modal__card', { y: 60, scale: 0.94, opacity: 0, duration: 0.7, ease: 'expo.out' });
+    }, root);
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      getLenis()?.start();
+      ctx.revert();
+    };
+  }, [onClose]);
 
   return (
-    <div
-      onClick={onClose}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(0,0,0,0.6)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 9999,
-        padding: '20px',
-      }}
-    >
-      <div
-        onClick={e => e.stopPropagation()}
-        style={{
-          background: 'white',
-          borderRadius: '16px',
-          maxWidth: '480px',
-          width: '100%',
-          overflow: 'hidden',
-          boxShadow: '0 24px 60px rgba(0,0,0,0.3)',
-        }}
-      >
-        {/* Header */}
-        <div
-          style={{
-            background: LOGO_GREEN,
-            padding: '24px 28px 20px',
-            position: 'relative',
-          }}
-        >
-          <p
-            style={{
-              fontSize: '11px',
-              fontWeight: 700,
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              color: LOGO_ORANGE,
-              margin: '0 0 6px',
-            }}
-          >
-            We're Hiring
-          </p>
-          <h2
-            style={{
-              fontFamily: 'var(--ff-display)',
-              fontSize: '1.5rem',
-              fontWeight: 700,
-              color: 'white',
-              margin: 0,
-            }}
-          >
-            {vacancy.title}
-          </h2>
-          <button
-            onClick={onClose}
-            style={{
-              position: 'absolute',
-              top: '16px',
-              right: '16px',
-              background: 'rgba(255,255,255,0.15)',
-              border: 'none',
-              color: 'white',
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              cursor: 'pointer',
-              fontSize: '18px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              lineHeight: 1,
-            }}
-          >
-            ×
-          </button>
-        </div>
-
-        {/* Body */}
-        <div style={{ padding: '28px' }}>
-          <p
-            style={{
-              fontSize: '15px',
-              lineHeight: 1.8,
-              color: '#444',
-              margin: '0 0 24px',
-            }}
-          >
-            {vacancy.description}
-          </p>
-          <a
-            href="mailto:admin@mooilande.co.za"
-            style={{
-              display: 'inline-block',
-              background: LOGO_ORANGE,
-              color: 'white',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontWeight: 700,
-              fontSize: '14px',
-              textDecoration: 'none',
-              letterSpacing: '0.03em',
-            }}
-          >
-            Send Your CV →
-          </a>
-        </div>
+    <div className="modal" ref={root} role="dialog" aria-modal="true" aria-labelledby="vacancy-title">
+      <div className="modal__backdrop" onClick={onClose} />
+      <div className="modal__card">
+        <button className="modal__close" onClick={onClose} aria-label="Close">
+          <X size={20} />
+        </button>
+        <span className="eyebrow eyebrow--amber">Now hiring</span>
+        <h3 id="vacancy-title">{vacancy.title}</h3>
+        <p>{vacancy.description}</p>
+        <a href={`mailto:${CONTACT.email}?subject=${encodeURIComponent('Application: ' + vacancy.title)}`} className="btn btn--amber">
+          Send your CV <ArrowUpRight size={16} />
+        </a>
       </div>
     </div>
   );
 };
 
 const Footer: React.FC = () => {
+  const root = useRef<HTMLElement>(null);
+  const [active, setActive] = useState<Vacancy | null>(null);
   const year = new Date().getFullYear();
-  const [activeVacancy, setActiveVacancy] = useState<Vacancy | null>(null);
 
-  const LOGO_GREEN = '#3F6B2A';
-  const LOGO_ORANGE = '#D97A1E';
+  useLayoutEffect(() => {
+    if (prefersReducedMotion()) return;
+    const ctx = gsap.context(() => {
+      const split = SplitText.create('.footer__word', { type: 'chars', charsClass: 'char' });
+      gsap.from(split.chars, {
+        yPercent: 100,
+        ease: 'expo.out',
+        stagger: 0.04,
+        duration: 1.4,
+        scrollTrigger: { trigger: '.footer__word', start: 'top 95%', once: true },
+      });
+      gsap.from('.footer__col', {
+        y: 40,
+        autoAlpha: 0,
+        stagger: 0.1,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: '.footer__cols', start: 'top 90%', once: true },
+      });
+    }, root);
+    return () => ctx.revert();
+  }, []);
 
-  const links = {
-    Shop: ['Animal Health', 'Crop & Plant', 'Equipment', 'Feed & Nutrition', 'Special Offers'],
-    Company: ['About Us', 'Our Team', 'Careers', 'Blog', 'Contact'],
-    Support: ['FAQ', 'Delivery Info', 'Returns & T&Cs', 'Track Order', 'Wholesale Enquiries'],
+  useEffect(() => {
+    document.documentElement.classList.toggle('modal-open', !!active);
+  }, [active]);
+
+  const toTop = () => {
+    const lenis = getLenis();
+    if (lenis) lenis.scrollTo(0, { duration: 2 });
+    else window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-  const vacancies: Vacancy[] = [
-    {
-      title: 'Cashier',
-      description:
-        "We're on the lookout for a diligent and customer-focused Cashier to join our team! If you're a hardworking individual with a knack for accuracy and a friendly demeanor, we'd love to hear from you. If interested please send your CV to admin@mooilande.co.za",
-    },
-    {
-      title: 'Animal Health',
-      description:
-        "We're seeking a motivated and knowledgeable Animal Health Salesperson or Technician to join our growing company! If you have a passion for animal well-being and helping customers, this could be the perfect opportunity for you. If interested please send your CV to admin@mooilande.co.za",
-    },
-  ];
 
   return (
     <>
-      {activeVacancy && (
-        <VacancyModal vacancy={activeVacancy} onClose={() => setActiveVacancy(null)} />
-      )}
+      {active && <VacancyModal vacancy={active} onClose={() => setActive(null)} />}
 
-      <footer
-        style={{
-          background: LOGO_GREEN,
-          color: 'rgba(255,255,255,0.85)',
-          paddingTop: '64px',
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
-        {/* subtle texture */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage:
-              'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05) 0%, transparent 40%), radial-gradient(circle at 80% 40%, rgba(255,255,255,0.04) 0%, transparent 40%)',
-            pointerEvents: 'none',
-          }}
-        />
-
-        <div className="container" style={{ position: 'relative' }}>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1.6fr 1fr 1fr 1fr 1.4fr',
-              gap: 48,
-              paddingBottom: 48,
-              borderBottom: '1px solid rgba(255,255,255,0.15)',
-            }}
-            className="footer-grid"
-          >
-            {/* Brand */}
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-                <div
-                  style={{
-                    width: 46,
-                    height: 46,
-                    borderRadius: '50%',
-                    overflow: 'hidden',
-                    background: 'white',
-                    border: `2px solid ${LOGO_ORANGE}`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 6px 16px rgba(0,0,0,0.15)',
-                  }}
-                >
-                  <img
-                    src="/logo.jpeg"
-                    alt="Mooilande AgriVet"
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                    }}
-                  />
-                </div>
-
-                <div>
-                  <div
-                    style={{
-                      fontFamily: 'var(--ff-display)',
-                      fontWeight: 700,
-                      fontSize: '1.2rem',
-                      color: 'var(--clr-white)',
-                      lineHeight: 1.1,
-                    }}
-                  >
-                    Mooilande
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '10px',
-                      fontWeight: 600,
-                      letterSpacing: '0.12em',
-                      textTransform: 'uppercase',
-                      color: LOGO_ORANGE,
-                    }}
-                  >
-                    AgriVet
-                  </div>
-                </div>
-              </div>
-
-              <p
-                style={{
-                  fontSize: '14px',
-                  lineHeight: 1.8,
-                  maxWidth: 280,
-                  marginBottom: 24,
-                  color: 'rgba(255,255,255,0.8)',
-                }}
-              >
-                Rooted in South African soil. Supplying premium agricultural and veterinary
-                products to farms across all nine provinces.
+      <footer className="footer" ref={root}>
+        <div className="container">
+          <div className="footer__top">
+            <div className="footer__brand">
+              <img src="/animals-logo.webp" alt="" className="footer__mark" loading="lazy" decoding="async" />
+              <p>
+                Veld tot Voorraad. Animal feeds, animal health, gardening, irrigation, farm supplies, hardware, autoshop,
+                household and pastures — all in Meyerton.
               </p>
-
-              <div style={{ display: 'flex', gap: 8 }}>
-                {['🇿🇦', '🌱', '🐄'].map((emoji, i) => (
-                  <span key={i} style={{ fontSize: '20px' }}>
-                    {emoji}
-                  </span>
-                ))}
-              </div>
             </div>
-
-            {/* Link columns */}
-            {Object.entries(links).map(([heading, items]) => (
-              <div key={heading}>
-                <h4
-                  style={{
-                    fontFamily: 'var(--ff-display)',
-                    fontSize: '14px',
-                    fontWeight: 700,
-                    color: LOGO_ORANGE,
-                    letterSpacing: '0.05em',
-                    marginBottom: 20,
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  {heading}
-                </h4>
-
-                <ul
-                  style={{
-                    listStyle: 'none',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 12,
-                    padding: 0,
-                    margin: 0,
-                  }}
-                >
-                  {items.map(item => {
-                    const hrefMap: Record<string, string> = {
-                      'Contact': '#contact',
-                      'Delivery Info': '#deliveries',
-                      'Returns & T&Cs': '#terms',
-                    };
-                    return (
-                      <li key={item}>
-                        <a
-                          href={hrefMap[item] ?? '#'}
-                          style={{
-                            fontSize: '14px',
-                            color: 'rgba(255,255,255,0.75)',
-                            transition: 'color 0.2s',
-                            textDecoration: 'none',
-                          }}
-                          onMouseEnter={e => (e.currentTarget.style.color = LOGO_ORANGE)}
-                          onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.75)')}
-                        >
-                          {item}
-                        </a>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            ))}
-
-            {/* Vacancies column */}
-            <div>
-              <h4
-                style={{
-                  fontFamily: 'var(--ff-display)',
-                  fontSize: '14px',
-                  fontWeight: 700,
-                  color: LOGO_ORANGE,
-                  letterSpacing: '0.05em',
-                  marginBottom: 20,
-                  textTransform: 'uppercase',
-                }}
-              >
-                Vacancies
-              </h4>
-              <ul
-                style={{
-                  listStyle: 'none',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 12,
-                  padding: 0,
-                  margin: 0,
-                }}
-              >
-                {vacancies.map(vacancy => (
-                  <li key={vacancy.title}>
-                    <button
-                      onClick={() => setActiveVacancy(vacancy)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        padding: 0,
-                        cursor: 'pointer',
-                        fontSize: '14px',
-                        color: 'rgba(255,255,255,0.75)',
-                        transition: 'color 0.2s',
-                        textAlign: 'left',
-                      }}
-                      onMouseEnter={e => (e.currentTarget.style.color = LOGO_ORANGE)}
-                      onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.75)')}
-                    >
-                      {vacancy.title}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <button className="footer__top-btn" onClick={toTop}>
+              Back to top <ArrowUp size={16} />
+            </button>
           </div>
 
-          {/* Bottom bar */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: 12,
-              padding: '20px 0',
-              fontSize: '13px',
-            }}
-          >
-            <span style={{ color: 'rgba(255,255,255,0.75)' }}>
-              © {year} Mooilande AgriVet (Pty) Ltd. All rights reserved.
-            </span>
-
-            <div style={{ display: 'flex', gap: 24 }}>
-              {['Privacy Policy', 'Terms of Use', 'Cookie Policy'].map(link => (
-                <a
-                  key={link}
-                  href={link === 'Terms of Use' ? '#terms' : '#'}
-                  style={{
-                    color: 'rgba(255,255,255,0.6)',
-                    transition: 'color 0.2s',
-                    textDecoration: 'none',
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.color = LOGO_ORANGE)}
-                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.6)')}
-                >
-                  {link}
-                </a>
+          <div className="footer__cols">
+            <div className="footer__col">
+              <h4>Visit</h4>
+              <p>{CONTACT.address}</p>
+              <dl className="hours hours--light">
+                {CONTACT.hours.map(h => (
+                  <React.Fragment key={h.day}>
+                    <dt>{h.day}</dt>
+                    <dd>{h.time}</dd>
+                  </React.Fragment>
+                ))}
+              </dl>
+            </div>
+            <div className="footer__col">
+              <h4>Contact</h4>
+              <a href={CONTACT.phoneHref}>{CONTACT.phone}</a>
+              <a href={CONTACT.whatsappHref} target="_blank" rel="noreferrer">{CONTACT.cell} (WhatsApp)</a>
+              <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+              <div className="footer__social">
+                <a href={CONTACT.facebookHref} target="_blank" rel="noreferrer" aria-label="Facebook"><Facebook size={18} /></a>
+                <a href={CONTACT.channelHref} target="_blank" rel="noreferrer" aria-label="WhatsApp Channel"><MessageCircle size={18} /></a>
+              </div>
+            </div>
+            <div className="footer__col">
+              <h4>Explore</h4>
+              {EXPLORE.map(l => (
+                <a key={l.href} href={l.href}>{l.label}</a>
+              ))}
+            </div>
+            <div className="footer__col">
+              <h4>Vacancies</h4>
+              {VACANCIES.length === 0 && <p>No open positions at the moment.</p>}
+              {VACANCIES.map(v => (
+                <button key={v.title} className="footer__job" onClick={() => setActive(v)}>
+                  <Briefcase size={16} /> {v.title} <ArrowUpRight size={14} />
+                </button>
               ))}
             </div>
           </div>
         </div>
 
-        <style>{`
-          @media (max-width: 900px) {
-            .footer-grid {
-              grid-template-columns: 1fr 1fr !important;
-            }
-          }
-          @media (max-width: 550px) {
-            .footer-grid {
-              grid-template-columns: 1fr !important;
-            }
-          }
-        `}</style>
+        <div className="footer__word" aria-hidden="true">Mooilande</div>
+
+        <div className="container footer__bottom">
+          <span>© {year} Mooilande AgriVet (Pty) Ltd. All rights reserved.</span>
+          <a href="/#terms">Terms &amp; Conditions</a>
+        </div>
+
+        <a
+          className="footer__credit"
+          href="https://digitalsolutionssa.co.za"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Site proudly built by Digital Solutions SA"
+        >
+          {/* Phones get a stacked version so the text stays readable */}
+          <picture>
+            <source media="(max-width: 640px)" srcSet="/built-by-digital-solutions-sa-mobile.png" />
+            <img src="/built-by-digital-solutions-sa.png" alt="Site proudly built by Digital Solutions SA" loading="lazy" />
+          </picture>
+        </a>
       </footer>
     </>
   );

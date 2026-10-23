@@ -1,266 +1,176 @@
-import React, { useEffect, useState } from 'react';
-import { ArrowRight, ShieldCheck, Truck, Star } from 'lucide-react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { ArrowDown, ArrowRight, ShieldCheck, Star, Truck } from 'lucide-react';
+import { gsap, SplitText, ScrollTrigger, magnetic, prefersReducedMotion } from '../lib/motion';
+import type { FieldScene } from '../three/FieldScene';
 
-const Hero: React.FC = () => {
-  const [loaded, setLoaded] = useState(false);
-  const [videoReady, setVideoReady] = useState(false);
+interface Props {
+  ready: boolean;
+}
 
-  const LOGO_LIGHT_GREEN = '#8FBF3A';
-  const HERO_VIDEO = '/hero-video.mp4';
-  const HERO_POSTER = '/hero.webp'; // ✅ FIXED: was 'hero-video.webp'
+const Hero: React.FC<Props> = ({ ready }) => {
+  const root = useRef<HTMLElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const sceneRef = useRef<FieldScene | null>(null);
+  const introRef = useRef(prefersReducedMotion() ? 1 : 0);
+  const [fallback, setFallback] = useState(false);
 
+  // Three.js field, loaded as its own chunk so the rest of the page isn't waiting on it
   useEffect(() => {
-    const t = setTimeout(() => setLoaded(true), 100);
-    return () => clearTimeout(t);
+    const canvas = canvasRef.current!;
+    let cancelled = false;
+    let scene: FieldScene | null = null;
+    let io: IntersectionObserver | null = null;
+
+    // Data saver on, or a low-memory phone: show the still photo and skip downloading the 3D engine
+    const nav = navigator as Navigator & { connection?: { saveData?: boolean }; deviceMemory?: number };
+    if (nav.connection?.saveData || (nav.deviceMemory !== undefined && nav.deviceMemory <= 2)) {
+      setFallback(true);
+      return;
+    }
+
+    import('../three/FieldScene').then(({ FieldScene, webglAvailable }) => {
+      if (cancelled) return;
+      if (!webglAvailable()) {
+        setFallback(true);
+        return;
+      }
+      const mobile = window.matchMedia('(max-width: 768px), (hover: none)').matches;
+      try {
+        scene = new FieldScene(canvas, mobile);
+      } catch {
+        setFallback(true);
+        return;
+      }
+      sceneRef.current = scene;
+      scene.setIntro(introRef.current);
+
+      // Only render while the hero is on screen
+      io = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) scene?.start();
+        else scene?.stop();
+      });
+      io.observe(root.current!);
+    });
+
+    return () => {
+      cancelled = true;
+      io?.disconnect();
+      scene?.dispose();
+      sceneRef.current = null;
+    };
   }, []);
 
-  const headline = 'Where the land\ncomes first.';
-  const sub =
-    'Premium agrivet supplies for South African farms — from animal health to precision crop care.';
+  // Scroll: pin the hero and walk the camera down the trail between the grass
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      const proxy = { p: 0 };
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: root.current,
+          start: 'top top',
+          end: '+=170%',
+          pin: true,
+          refreshPriority: 10, // measure first: everything below sits after this pin
+          scrub: 0.6,
+          onUpdate: self => sceneRef.current?.setProgress(self.progress),
+        },
+      });
+      tl.to(proxy, { p: 1, duration: 1 }, 0)
+        .to('.hero__layer--content', { yPercent: -18, opacity: 0, duration: 0.3, ease: 'power2.in' }, 0)
+        .to('.hero__layer--meta', { y: 40, opacity: 0, duration: 0.2 }, 0)
+        .to('.hero__shade', { opacity: 0.35, duration: 0.35 }, 0.05)
+        .to('.hero__fade', { opacity: 1, duration: 0.2, ease: 'power1.in' }, 0.8);
+      if (root.current!.querySelector('.hero__fallback')) tl.to('.hero__fallback', { scale: 1.15, duration: 1 }, 0);
+    }, root);
+    return () => ctx.revert();
+  }, []);
+
+  // Intro once the preloader lifts
+  useLayoutEffect(() => {
+    if (!ready) return;
+    const reduced = prefersReducedMotion();
+    const ctx = gsap.context(() => {
+      gsap.set('.hero__content, .hero__meta', { autoAlpha: 1 });
+      if (reduced) return;
+
+      const split = SplitText.create('.hero__title', { type: 'lines,chars', mask: 'lines' });
+      const grow = { v: 0 };
+      gsap.timeline({ defaults: { ease: 'expo.out' } })
+        .to(grow, { v: 1, duration: 2.6, ease: 'power3.out', onUpdate: () => {
+          introRef.current = grow.v;
+          sceneRef.current?.setIntro(grow.v);
+        } }, 0)
+        .from('.hero__eyebrow', { y: 20, autoAlpha: 0, duration: 1 }, 0.3)
+        .from(split.chars, { yPercent: 120, rotate: 8, duration: 1.3, stagger: 0.025 }, 0.35)
+        .from('.hero__rule', { scaleX: 0, transformOrigin: 'left', duration: 1.2 }, 0.9)
+        .from('.hero__sub', { y: 30, autoAlpha: 0, duration: 1.1 }, 1)
+        .from('.hero__actions > *', { y: 30, autoAlpha: 0, duration: 1, stagger: 0.1 }, 1.1)
+        .from('.hero__meta > *', { y: 20, autoAlpha: 0, duration: 0.9, stagger: 0.08 }, 1.3)
+        .add(() => {
+          ScrollTrigger.sort();
+          ScrollTrigger.refresh();
+        });
+    }, root);
+
+    const cleanups = Array.from(root.current!.querySelectorAll<HTMLElement>('[data-magnetic]')).map(el => magnetic(el));
+    return () => {
+      cleanups.forEach(c => c());
+      ctx.revert();
+    };
+  }, [ready]);
 
   return (
-    <section
-      id="hero"
-      style={{
-        position: 'relative',
-        height: '100vh',
-        overflow: 'hidden',
-        display: 'flex',
-        alignItems: 'center',
-        paddingBottom: '80px',
-        // ✅ Poster image always visible as the base layer — no flicker
-        backgroundImage: `url(${HERO_POSTER})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}
-    >
-      {/* VIDEO BACKGROUND — fades IN on top of the poster once ready */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto" // ✅ FIXED: was 'metadata' — now buffers eagerly
-        poster={HERO_POSTER}
-        onLoadedData={() => setVideoReady(true)}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          // ✅ Starts invisible, crossfades in once ready — poster stays visible underneath
-          opacity: videoReady ? 1 : 0,
-          transition: 'opacity 0.8s ease',
-          // ✅ Removed the scale animation so video snaps to same frame as poster
-          transform: 'scale(1)',
-        }}
-      >
-        <source src={HERO_VIDEO} type="video/mp4" />
-      </video>
+    <section id="hero" className="hero" ref={root}>
+      {fallback ? (
+        <div className="hero__fallback" style={{ backgroundImage: 'url(/hero-sm.webp)' }} />
+      ) : (
+        <canvas ref={canvasRef} className="hero__canvas" aria-hidden="true" />
+      )}
+      <div className="hero__shade" />
+      <div className="hero__fade" />
+      <div className="grain" />
 
-      {/* Gradient overlay */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'linear-gradient(105deg, rgba(26,18,8,0.88) 0%, rgba(45,80,22,0.55) 55%, rgba(26,18,8,0.15) 100%)',
-        }}
-      />
-
-      {/* Grain */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E")`,
-          opacity: 0.4,
-          pointerEvents: 'none',
-        }}
-      />
-
-      {/* Circles */}
-      <div
-        style={{
-          position: 'absolute',
-          right: '8%',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          width: 420,
-          height: 420,
-          border: `1px solid rgba(143,191,58,0.2)`,
-          borderRadius: '50%',
-          pointerEvents: 'none',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          right: 'calc(8% + 40px)',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          width: 340,
-          height: 340,
-          border: `1px solid rgba(143,191,58,0.1)`,
-          borderRadius: '50%',
-          pointerEvents: 'none',
-        }}
-      />
-
-      {/* Content */}
-      <div
-        className="container"
-        style={{ position: 'relative', zIndex: 2, padding: '80px 32px' }}
-      >
-        <div style={{ maxWidth: 620 }}>
-          {/* Eyebrow */}
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              background: 'rgba(143,191,58,0.15)',
-              border: '1px solid rgba(143,191,58,0.4)',
-              borderRadius: '999px',
-              padding: '6px 16px',
-              marginBottom: 28,
-              opacity: loaded ? 1 : 0,
-              transform: loaded ? 'translateY(0)' : 'translateY(20px)',
-              transition: 'all 0.8s ease 0.1s',
-            }}
-          >
-            <span
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: '50%',
-                background: LOGO_LIGHT_GREEN,
-              }}
-            />
-            <span
-              style={{
-                color: LOGO_LIGHT_GREEN,
-                fontSize: '12px',
-                fontWeight: 600,
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-              }}
-            >
-              Trusted AgriVet Partner
-            </span>
+      <div className="hero__layer hero__layer--content">
+        <div className="hero__content container">
+          <div className="hero__eyebrow">
+            <span className="dot" /> Trusted AgriVet Partner · Meyerton
           </div>
 
-          {/* Headline */}
-          <h1
-            style={{
-              fontSize: 'clamp(2.8rem, 6vw, 5rem)',
-              fontWeight: 700,
-              color: 'white',
-              lineHeight: 1.08,
-              whiteSpace: 'pre-line',
-              marginBottom: 24,
-            }}
-          >
-            {headline}
+          <h1 className="hero__title">
+            Where the land
+            <br />
+            <em>comes first.</em>
           </h1>
 
-          {/* Line */}
-          <div
-            style={{
-              width: 80,
-              height: 3,
-              background: `linear-gradient(90deg, ${LOGO_LIGHT_GREEN}, transparent)`,
-              marginBottom: 20,
-            }}
-          />
+          <div className="hero__rule" />
 
-          <p
-            style={{
-              fontSize: '1.1rem',
-              color: 'rgba(255,255,255,0.78)',
-              lineHeight: 1.7,
-              marginBottom: 40,
-              maxWidth: 500,
-            }}
-          >
-            {sub}
+          <p className="hero__sub">
+            Premium agrivet supplies for South African farms — from animal health to precision crop care.
           </p>
 
-          {/* Buttons */}
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-            <a href="#products">
-              <button
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  background: LOGO_LIGHT_GREEN,
-                  color: '#1a1208',
-                  padding: '14px 32px',
-                  borderRadius: '999px',
-                  fontWeight: 700,
-                  border: 'none',
-                  cursor: 'pointer',
-                }}
-              >
-                Shop Now <ArrowRight size={18} />
-              </button>
+          <div className="hero__actions">
+            <a href="#departments" className="btn btn--lime" data-magnetic>
+              Explore departments <ArrowRight size={18} />
             </a>
-
-            <a href="#about">
-              <button
-                style={{
-                  background: 'transparent',
-                  color: 'white',
-                  padding: '13px 28px',
-                  borderRadius: '999px',
-                  border: '1.5px solid rgba(255,255,255,0.35)',
-                  cursor: 'pointer',
-                }}
-              >
-                Our Story
-              </button>
+            <a href="#about" className="btn btn--ghost" data-magnetic>
+              Our story
             </a>
           </div>
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          background: LOGO_LIGHT_GREEN,
-          padding: '16px 32px',
-          display: 'flex',
-          justifyContent: 'center',
-          gap: 48,
-          flexWrap: 'wrap',
-        }}
-      >
-        {[
-          { icon: <Truck size={16} />, text: 'Fast Nationwide Delivery' },
-          { icon: <ShieldCheck size={16} />, text: 'Vet-Approved Products' },
-          { icon: <Star size={16} />, text: '4.8★ Customer Rating' },
-        ].map(b => (
-          <div
-            key={b.text}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              color: 'white',
-              fontSize: '13px',
-            }}
-          >
-            {b.icon}
-            {b.text}
+      <div className="hero__layer hero__layer--meta">
+        <div className="hero__meta container">
+          <div className="hero__badges">
+            <span><Truck size={16} /> Fast Nationwide Delivery</span>
+            <span><ShieldCheck size={16} /> Vet-Approved Products</span>
+            <span><Star size={16} /> 4.8★ Customer Rating</span>
           </div>
-        ))}
+          <a href="#about" className="hero__scroll" aria-label="Scroll to content">
+            <ArrowDown size={16} />
+            <span>Scroll</span>
+          </a>
+        </div>
       </div>
     </section>
   );
