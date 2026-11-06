@@ -12,7 +12,17 @@ const Team: React.FC = () => {
       revealAll(el);
       if (prefersReducedMotion()) return;
 
-      const loop = gsap.fromTo('.reel__track', { xPercent: 0 }, { xPercent: -50, duration: 55, ease: 'none', repeat: -1 });
+      const loop = gsap.fromTo('.reel__track', { xPercent: 0 }, {
+        xPercent: -50,
+        duration: 55,
+        ease: 'none',
+        repeat: -1,
+        // Scrolling up plays the reel backwards; a repeating tween stops dead when it reverses
+        // into its start, so jump far ahead (same visual position) to keep it looping.
+        onReverseComplete: () => {
+          loop.totalTime(loop.rawTime() + loop.duration() * 100);
+        },
+      });
       pauseOffscreen(el.querySelector('.reel')!, [loop]);
       const speed = { v: 1 };
       let dir = 1;

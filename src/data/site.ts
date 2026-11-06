@@ -164,6 +164,9 @@ export const TEAM: TeamMember[] = [
   { name: 'Moses Zolidwa', role: 'General Worker / Store Assistant', image: '/team/moseszolidwa.webp' },
   { name: 'Simon Mokaloba', role: 'General Worker / Store Assistant', image: '/team/simonmokaloba.webp' },
   { name: 'Delina Senoamadi', role: 'Cashier', image: '/team/delinasenoamadi.webp' },
+  { name: 'George Motaung', role: 'General Worker / Store Assistant', image: '/team/georgemotaung.webp' },
+  { name: 'Mose Moloi', role: 'General Worker / Floor Assistant', image: '/team/mosemoloi.webp' },
+  { name: 'Precious Bholo', role: 'Animal Health', image: '/team/preciousbholo.webp' },
 ];
 
 export interface Vacancy {
